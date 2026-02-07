@@ -1,9 +1,27 @@
 $(function () {
   console.log("Recommender.js loaded");
 
+  // // ENTER key triggers search
+  // $('#autoComplete').on('keypress', function (e) {
+  //   if (e.which == 13) $('.movie-button').click();
+  // });
+  
+  // Enable/disable button based on input
+  const input = document.getElementById('autoComplete');
+  const button = document.querySelector('.movie-button');
+
+  input.addEventListener('input', () => {
+      button.disabled = input.value.trim() === '';
+  });
+
   // ENTER key triggers search
-  $('#autoComplete').on('keypress', function (e) {
-    if (e.which == 13) $('.movie-button').click();
+  input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+          e.preventDefault(); // prevent form submission / page reload
+          if (!button.disabled) {
+              button.click(); // triggers search
+          }
+      }
   });
 
   // Enable/disable button based on input
