@@ -44,7 +44,7 @@ def recommend_movies(m):
     
     # Check if movie exists (case-insensitive)
     if m not in df["movie_title"].str.lower().values:
-        return("Sorry! The movie you requested for is not currently available. Please check your spelling or try again with another title")
+        return("Sorry! The movie you requested for is not currently available. Please check your spelling or try again with another movie")
     else:
         # Find the index of the movie (case-insensitive match)
         i = df[df["movie_title"].str.lower() == m].index[0]
