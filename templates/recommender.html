@@ -37,12 +37,6 @@
       <ul class="navbar-nav">
         {% if session.user_id %}
         <li class="nav-item">
-          <span class="nav-link" style="color: white;">Welcome, {{ session.username }}</span>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link btn btn-outline-danger" href="{{ url_for('logout') }}"
-            style="color: white; border-color: #e50914;">Logout</a>
-        </li>
         {% else %}
           <ul class="navbar-nav" style="position: fixed; top: 10px; left: 10px; display: flex; flex-direction: row; gap: 10px; z-index: 1050;">
             <li class="nav-item">
