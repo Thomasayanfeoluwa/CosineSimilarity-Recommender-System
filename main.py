@@ -1,10 +1,10 @@
+import os
 import pandas as pd
 import numpy as np
 import json
 import pickle
 import requests
 from bs4 import BeautifulSoup
-from email.mime.text import application
 from flask import Flask, request, render_template
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
@@ -12,14 +12,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 # Import NLP model and Vectorizer
-filename = "../models/comment.pkl"
+filename = "models/comment.pkl"
 clf = pickle.load(open(filename, "rb"))
-vectorizer = pickle.load(open("../models/transformed.pkl", "rb"))
+vectorizer = pickle.load(open("models/transformed.pkl", "rb"))
 
 
 
 def initiate_similarity():
-    df = pd.read_csv("../datasets/processed/final_data_processed.csv")
+    df = pd.read_csv("datasets/processed/final_data_processed.csv")
     # Create CountVectorizer
     CV = CountVectorizer()
     count_matrix = CV.fit_transform(df["combined_columns"])
@@ -35,17 +35,17 @@ def recommend_movies(m):
         similarity.shape
     except:
         df, similarity = initiate_similarity()
-    if m not in df["Movie_title"].unique():
+    if m not in df["movie_title"].unique():
         return("Sorry! The movie you requested for is not currently available. Please check your spelling or try again with another title")
     else:
-        i = df.loc[df["Movie_title"]==m].index[0]
+        i = df.loc[df["movie_title"]==m].index[0]
         lst = list(enumerate(similarity[i]))
         lst = sorted(lst, key = lambda x:x[1], reverse=True)
         lst = lst[1:11] # excluding first item since it is the requested movie itself
         l = []
         for i in range(len(lst)):
             a = lst[i][0]
-            l.append(df["Movie_title"][a])
+            l.append(df["movie_title"][a])
         return l
     
 # Converting list of string to list (eg. "["abc","def"]" to ["abc","def"])
@@ -56,8 +56,8 @@ def convert_to_list(my_list):
     return my_list
 
 def get_suggestions():
-    df = pd.read_csv("../datasets/processed/final_data_processed.csv")
-    return list(df["Movie_title"].str.capitalize())
+    df = pd.read_csv("datasets/processed/final_data_processed.csv")
+    return list(df["movie_title"].str.capitalize())
 
 
 app = Flask(__name__)
@@ -67,7 +67,8 @@ app = Flask(__name__)
 
 def home():
     suggestions = get_suggestions()
-    return render_template("home.html", suggestions=suggestions)
+    tmdb_api_key = os.environ.get("TMDB_API_KEY")
+    return render_template("home.html", suggestions=suggestions, TMDB_API_KEY=tmdb_api_key)
 
 @app.route("/similarity", methods=["POST"])
 def similarity():
