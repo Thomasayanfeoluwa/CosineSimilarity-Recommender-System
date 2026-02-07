@@ -2,3 +2,7 @@ lxml
 tmdbv3api
 load_dotenv
 nltk
+gunicorn
+requests
+beautifulsoup4
+Flask
