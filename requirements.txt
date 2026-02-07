@@ -6,3 +6,5 @@ gunicorn
 requests
 beautifulsoup4
 Flask
+flask-sqlalchemy
+psycopg2
