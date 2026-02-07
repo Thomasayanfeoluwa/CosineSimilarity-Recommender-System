@@ -28,7 +28,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-transparent"
     style="position: absolute; width: 100%; z-index: 1000;">
     <a class="navbar-brand" href="{{ url_for('home') }}"
-      style="color: #e50914; font-weight: bold; font-size: 1.5rem; margin-left: 20px;">RECOMMENDER</a>
+      style="color: #e50914; font-weight: bold; font-size: 1.5rem; margin-left: 20px;"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -44,13 +44,15 @@
             style="color: white; border-color: #e50914;">Logout</a>
         </li>
         {% else %}
-        <li class="nav-item">
-          <span class="nav-link" style="color: grey;">Sign in to review</span>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link btn btn-primary mr-2" href="{{ url_for('home') }}"
-            style="background-color: #e50914; border: none;">Go Home</a>
-        </li>
+          <ul class="navbar-nav" style="position: fixed; top: 10px; left: 10px; display: flex; flex-direction: row; gap: 10px; z-index: 1050;">
+            <li class="nav-item">
+              <span class="nav-link" style="color: grey; padding: 0;">Sign in to review</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary" href="{{ url_for('home') }}"
+                style="background-color: #e50914; border: none; padding: 5px 12px;">Go Home</a>
+            </li>
+          </ul>
         {% endif %}
       </ul>
     </div>
