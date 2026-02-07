@@ -1,5 +1,12 @@
 $(function() {
   // Button will be disabled until we type anything inside the input field
+  // ENTER key triggers search
+  $('#autoComplete').on('keypress', function(e) {
+      if (e.which == 13) {
+          $('.movie-button').click();
+      }
+  });
+
   const source = document.getElementById('autoComplete');
   const inputHandler = function(e) {
     if(e.target.value==""){
@@ -12,7 +19,7 @@ $(function() {
   source.addEventListener('input', inputHandler);
 
   $('.movie-button').on('click',function(){
-    var my_api_key = 'TMDB_API_KEY';
+    var my_api_key = TMDB_API_KEY;
     var title = $('.movie').val();
     if (title=="") {
       $('.results').css('display','none');
@@ -26,7 +33,7 @@ $(function() {
 
 // will be invoked when clicking on the recommended movies
 function recommendcard(e){
-  var my_api_key = 'TMDB_API_KEY';
+  var my_api_key = TMDB_API_KEY;
   var title = e.getAttribute('title'); 
   load_details(my_api_key,title);
 }
