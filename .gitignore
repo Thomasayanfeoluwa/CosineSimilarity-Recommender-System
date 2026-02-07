@@ -9,6 +9,8 @@ __pycache__/
 # Datasets
 datasets
 
+# models
+models
 
 # Distribution / packaging
 .Python
