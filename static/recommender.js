@@ -1,49 +1,63 @@
 $(function () {
   console.log("Recommender.js loaded");
-  // Button will be disabled until we type anything inside the input field
+
   // ENTER key triggers search
   $('#autoComplete').on('keypress', function (e) {
-    if (e.which == 13) {
-      console.log("Enter key pressed");
-      $('.movie-button').click();
+    if (e.which == 13) $('.movie-button').click();
+  });
+
+  // Enable/disable button based on input
+  const source = document.getElementById('autoComplete');
+  source.addEventListener('input', function(e) {
+    $('.movie-button').attr('disabled', e.target.value == "");
+  });
+
+  // Initialize autocomplete once
+  const autoCompleteJS = new autoComplete({
+    selector: "#autoComplete",
+    placeHolder: "Enter the Movie Name",
+    data: { src: films, cache: true },
+    resultsList: {
+      element: (list, data) => {
+        if (!data.results.length) {
+          const message = document.createElement("div");
+          message.innerHTML = `<span>No results found</span>`;
+          list.appendChild(message);
+        }
+      },
+      noResults: true,
+      maxResults: 5
+    },
+    resultItem: { highlight: true },
+    events: {
+      input: { selection: (event) => autoCompleteJS.input.value = event.detail.selection.value }
     }
   });
 
-  const source = document.getElementById('autoComplete');
-  const inputHandler = function (e) {
-    if (e.target.value == "") {
-      $('.movie-button').attr('disabled', true);
-    }
-    else {
-      $('.movie-button').attr('disabled', false);
-    }
-  }
-  source.addEventListener('input', inputHandler);
-
+  // Movie search click handler
   $('.movie-button').on('click', function () {
     console.log("Search button clicked");
 
-    // Check if API Key is set
-    if (typeof TMDB_API_KEY === 'undefined' || TMDB_API_KEY === '' || TMDB_API_KEY === 'None') {
-      alert("TMDB API Key is missing! Please set the TMDB_API_KEY environment variable.");
-      console.error("TMDB API Key is missing");
+    if (!TMDB_API_KEY || TMDB_API_KEY === 'None') {
+      alert("TMDB API Key is missing!");
       return;
     }
 
     var my_api_key = TMDB_API_KEY;
     console.log("API Key found: " + my_api_key);
+
     var title = $('.movie').val();
     console.log("Searching for title: " + title);
 
-    if (title == "") {
-      $('.results').css('display', 'none');
-      $('.fail').css('display', 'block');
-    }
-    else {
+    if (title === "") {
+      $('.results').hide();
+      $('.fail').show();
+    } else {
       load_details(my_api_key, title);
     }
   });
 });
+
 
 // will be invoked when clicking on the recommended movies
 function recommendcard(e) {
@@ -201,6 +215,7 @@ function show_details(movie_details, arr, movie_title, my_api_key, movie_id) {
     }
   });
 }
+
 
 // get the details of individual cast
 function get_individual_cast(movie_cast, my_api_key) {
