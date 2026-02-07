@@ -1,3 +1,4 @@
 lxml
 tmdbv3api
 load_dotenv
+nltk
