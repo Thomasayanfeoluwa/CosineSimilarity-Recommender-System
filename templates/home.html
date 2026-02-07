@@ -97,18 +97,15 @@
     <center>
       <h1 style=""> Movie Recommendation System</h1>
     </center>
-    <div class="form-group shadow-textarea" style="margin-top: 30px;text-align: center;color: white;">
+    <div class="search-container" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px;">
       <input type="text" name="movie" class="movie form-control" id="autoComplete" autocomplete="off"
-        placeholder="Enter the Movie Name"
-        style="background-color: #ffffff;border-color:#ffffff;width: 110%;color: #181818" required="required" />
-      <br>
+            placeholder="Enter the Movie Name"
+            style="background-color: #ffffff; border-color: #ffffff; width: 600px; max-width: 90%; color: #181818;" required />
+      <button class="btn btn-primary movie-button"
+              style="background-color: #e50914; border-color: #e50914; width: 120px;"
+              disabled>Enter</button>
     </div>
 
-    <div class="form-group" style="text-align: center;">
-      <button class="btn btn-primary btn-block movie-button"
-        style="background-color: #e50914;text-align: center;border-color: #e50914;width:120px;"
-        disabled="true">Enter</button><br><br>
-    </div>
   </div>
 
   <div id="loader" class="text-center">
