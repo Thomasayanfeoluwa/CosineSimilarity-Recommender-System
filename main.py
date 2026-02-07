@@ -18,7 +18,12 @@ vectorizer = pickle.load(open("models/transformed.pkl", "rb"))
 
 
 
+# Initialize global variables for df and similarity
+df = None
+similarity = None
+
 def initiate_similarity():
+    global df, similarity
     df = pd.read_csv("datasets/processed/final_data_processed.csv")
     # Create CountVectorizer
     CV = CountVectorizer()
@@ -29,16 +34,19 @@ def initiate_similarity():
 
 
 def recommend_movies(m):
+    global df, similarity
     m = m.lower()
-    try:
-        df.head()
-        similarity.shape
-    except:
+    
+    # Initialize if not already done
+    if df is None or similarity is None:
         df, similarity = initiate_similarity()
-    if m not in df["movie_title"].unique():
+    
+    # Check if movie exists (case-insensitive)
+    if m not in df["movie_title"].str.lower().values:
         return("Sorry! The movie you requested for is not currently available. Please check your spelling or try again with another title")
     else:
-        i = df.loc[df["movie_title"]==m].index[0]
+        # Find the index of the movie (case-insensitive match)
+        i = df[df["movie_title"].str.lower() == m].index[0]
         lst = list(enumerate(similarity[i]))
         lst = sorted(lst, key = lambda x:x[1], reverse=True)
         lst = lst[1:11] # excluding first item since it is the requested movie itself
