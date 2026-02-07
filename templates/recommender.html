@@ -23,6 +23,39 @@
 </head>
 
 <body id="content">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-transparent"
+    style="position: absolute; width: 100%; z-index: 1000;">
+    <a class="navbar-brand" href="{{ url_for('home') }}"
+      style="color: #e50914; font-weight: bold; font-size: 1.5rem; margin-left: 20px;">RECOMMENDER</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav" style="margin-right: 20px;">
+      <ul class="navbar-nav">
+        {% if session.user_id %}
+        <li class="nav-item">
+          <span class="nav-link" style="color: white;">Welcome, {{ session.username }}</span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-danger" href="{{ url_for('logout') }}"
+            style="color: white; border-color: #e50914;">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <span class="nav-link" style="color: grey;">Sign in to review</span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary mr-2" href="{{ url_for('home') }}"
+            style="background-color: #e50914; border: none;">Go Home</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
   <div class="results">
     <center>
       <h2 id="name" class="text-uppercase">{{title}}</h2>
@@ -116,7 +149,24 @@
   {% endif %}
 
   <center>
+    <!-- Add Review Form -->
+    {% if session.user_id %}
+    <div class="container" style="color:white; margin-top: 30px; margin-bottom: 20px;">
+      <h3>Leave a Review</h3>
+      <form action="{{ url_for('add_review') }}" method="post" style="width: 60%; margin: 0 auto;">
+        <input type="hidden" name="movie_title" value="{{title}}">
+        <div class="form-group">
+          <textarea class="form-control" name="review_content" rows="3" placeholder="Write your review here..." required
+            style="background-color: rgba(0,0,0,0.5); color: white; border-color: white;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="background-color: #e50914; border: none;">Submit
+          Review</button>
+      </form>
+    </div>
+    {% endif %}
+
     {% if reviews %}
+
     <h2 style="color:white">USER REVIEWS</h2>
     <div class="col-md-12" style="margin: 0 auto; margin-top:25px;">
       <table class="table table-bordered" bordercolor="white" style="color:white">
