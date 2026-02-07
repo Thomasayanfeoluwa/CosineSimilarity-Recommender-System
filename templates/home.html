@@ -17,13 +17,14 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+
+
   <!-- Auto Complete -->
   <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/css/autoComplete.min.css">
+    href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
   <script type="text/javascript">
     var films = {{ suggestions| tojson}};
-    var TMDB_API_KEY = "{{TMDB_API_KEY}}";
   </script>
 
 </head>
@@ -99,7 +100,7 @@
     <div class="form-group shadow-textarea" style="margin-top: 30px;text-align: center;color: white;">
       <input type="text" name="movie" class="movie form-control" id="autoComplete" autocomplete="off"
         placeholder="Enter the Movie Name"
-        style="background-color: #ffffff;border-color:#ffffff;width: 60%;color: #181818" required="required" />
+        style="background-color: #ffffff;border-color:#ffffff;width: 110%;color: #181818" required="required" />
       <br>
     </div>
 
@@ -198,8 +199,11 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <!-- Load autocomplete library -->
-  <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
 
+  <script>
+    const TMDB_API_KEY = "{{ TMDB_API_KEY }}";
+</script>
   <!-- Load our custom JavaScript (recommender.js has all functionality including autocomplete) -->
   <script type="text/javascript" src="{{url_for('static', filename='recommender.js')}}"></script>
 
