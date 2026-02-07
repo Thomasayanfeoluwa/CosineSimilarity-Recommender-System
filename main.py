@@ -163,7 +163,10 @@ def recommend():
         
         # web scraping to get user reviews from IMDB site
         url = f'https://www.imdb.com/title/{imdb_id}/reviews/?ref_=tt_ov_rt'
-        headers = {'User-Agent': 'Mozilla/5.0'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9'
+        }
     
         response = requests.get(url, headers=headers)
         print(f"IMDB response status: {response.status_code}")

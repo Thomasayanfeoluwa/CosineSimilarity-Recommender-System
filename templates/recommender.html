@@ -42,7 +42,8 @@
         <br />
         <h6 id="title" style="color:white;">TITLE: &nbsp;{{title}}</h6>
         <h6 id="overview" style="color:white;max-width: 85%">OVERVIEW:
-          <br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{overview}}</h6>
+          <br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{overview}}
+        </h6>
         <h6 id="vote_average" style="color:white;">RATING: &nbsp;{{vote_average}}/10 ({{vote_count}} votes)</h6>
         <h6 id="genres" style="color:white;">GENRE: &nbsp;{{genres}}</h6>
         <h6 id="date" style="color:white;">RELEASE DATE: &nbsp;{{release_date}}</h6>
@@ -128,7 +129,7 @@
 
         <tbody>
           {% for review, status in reviews.items() if not reviews.hidden %}
-          <tr style="background-color:#e5091485;">
+          <tr style="background-color:rgba(0, 0, 0, 0.5);">
             <td>{{review}}</td>
             <td>
               <center>
