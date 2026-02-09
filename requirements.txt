@@ -1,6 +1,6 @@
 lxml
 tmdbv3api
-load_dotenv
+python-dotenv
 nltk
 gunicorn
 requests
@@ -8,3 +8,7 @@ beautifulsoup4
 Flask
 flask-sqlalchemy
 psycopg2
+pandas
+numpy
+scikit-learn
+urllib3
