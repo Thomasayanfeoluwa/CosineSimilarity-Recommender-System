@@ -82,6 +82,49 @@ def get_suggestions():
     df = pd.read_csv("datasets/processed/final_data_processed.csv")
     return list(df["movie_title"].str.capitalize())
 
+def get_trailer(imdb_id):
+    api_key = os.environ.get("TMDB_API_KEY")
+    if not api_key:
+        return None
+        
+    try:
+        # 1. Get TMDB ID
+        find_url = f"https://api.themoviedb.org/3/find/{imdb_id}?api_key={api_key}&external_source=imdb_id"
+        response = requests.get(find_url)
+        data = response.json()
+        
+        if not data.get('movie_results'):
+            return None
+            
+        tmdb_id = data['movie_results'][0]['id']
+        
+        # 2. Get Videos
+        video_url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/videos?api_key={api_key}"
+        video_response = requests.get(video_url)
+        video_data = video_response.json()
+        
+        results = video_data.get('results', [])
+        youtube_videos = [v for v in results if v['site'] == 'YouTube']
+        
+        if not youtube_videos:
+            return None
+            
+        # 3. Prioritize Trailer > Teaser > Others
+        trailers = [v for v in youtube_videos if v['type'] == 'Trailer']
+        if trailers:
+            return trailers[0]['key']
+            
+        teasers = [v for v in youtube_videos if v['type'] == 'Teaser']
+        if teasers:
+            return teasers[0]['key']
+            
+        # Fallback to whatever is available (Behind the Scenes, etc.)
+        return youtube_videos[0]['key']
+        
+    except Exception as e:
+        print(f"Error fetching trailer: {e}")
+        return None
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
@@ -270,7 +313,10 @@ def recommend():
         cast_details = {cast_names[i]:[cast_ids[i], cast_profiles[i], cast_bdays[i], cast_places[i], cast_bios[i]] for i in range(len(cast_places))}
         print(f"calling imdb api: {'https://www.imdb.com/title/{}/reviews/?ref_=tt_ov_rt'.format(imdb_id)}")
         
-        # 1. Fetch Local DB Reviews
+        # 1. Fetch Trailer
+        trailer_key = get_trailer(imdb_id)
+        
+        # 2. Fetch Local DB Reviews
         # We query by movie_title (approximate match) or exact if we had imdb_id stored. 
         # Using title is safer if frontend passes title. But different users might have slightly different titles?
         # Actually input 'title' is from frontend. Let's use that.
@@ -285,7 +331,7 @@ def recommend():
             reviews_list.append(rev.content)
             reviews_status.append(rev.sentiment)
 
-        # 2. Fetch IMDB Reviews
+        # 3. Fetch IMDB Reviews
         url = f'https://www.imdb.com/title/{imdb_id}/reviews/?ref_=tt_ov_rt'
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -324,7 +370,7 @@ def recommend():
         return render_template('recommender.html',title=title,poster=poster,overview=overview,vote_average=vote_average,
             vote_count=vote_count,release_date=release_date,runtime=runtime,status=status,genres=genres,
             movie_cards=movie_cards,reviews=movie_reviews,casts=casts,cast_details=cast_details, 
-            TMDB_API_KEY=os.environ.get("TMDB_API_KEY"), user_logged_in=user_logged_in)
+            TMDB_API_KEY=os.environ.get("TMDB_API_KEY"), user_logged_in=user_logged_in, trailer_key=trailer_key)
                 
     except Exception as e:
         print(f"ERROR in recommend route: {e}")

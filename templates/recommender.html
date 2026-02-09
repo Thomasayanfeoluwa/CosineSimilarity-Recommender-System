@@ -37,8 +37,9 @@
       <ul class="navbar-nav">
         {% if session.user_id %}
         <li class="nav-item">
-        {% else %}
-          <ul class="navbar-nav" style="position: fixed; top: 10px; left: 10px; display: flex; flex-direction: row; gap: 10px; z-index: 1050;">
+          {% else %}
+          <ul class="navbar-nav"
+            style="position: fixed; top: 10px; left: 10px; display: flex; flex-direction: row; gap: 10px; z-index: 1050;">
             <li class="nav-item">
               <span class="nav-link" style="color: grey; padding: 0;">Sign in to review</span>
             </li>
@@ -47,7 +48,7 @@
                 style="background-color: #e50914; border: none; padding: 5px 12px;">Go Home</a>
             </li>
           </ul>
-        {% endif %}
+          {% endif %}
       </ul>
     </div>
   </nav>
@@ -70,6 +71,14 @@
       <div id="details">
         <br />
         <h6 id="title" style="color:white;">TITLE: &nbsp;{{title}}</h6>
+
+        {% if trailer_key %}
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#trailerModal"
+          onclick="playTrailer('{{ trailer_key }}')" style="margin-bottom: 20px;">
+          <i class="fa fa-play-circle"></i> Play Trailer
+        </button>
+        {% endif %}
+
         <h6 id="overview" style="color:white;max-width: 85%">OVERVIEW:
           <br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{overview}}
         </h6>
@@ -226,7 +235,7 @@
   </div>
 
   {% endif %}
-  
+
   </div>
   </div>
 
@@ -241,6 +250,49 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
+
+  <!-- Trailer Modal -->
+  <div class="modal fade" id="trailerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 800px;">
+      <div class="modal-content" style="background-color: #000; border: none;">
+        <div class="modal-body p-0"
+          style="position: relative; min-height: 450px; display: flex; align-items: center; justify-content: center;">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            style="position: absolute; top: -30px; right: 0; z-index: 1051; color: white; font-size: 30px; opacity: 1;">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div id="trailer-loader"
+            style="position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: black; z-index: 10;">
+            <img src="{{ url_for('static', filename='loading_black.gif') }}" alt="Loading..." style="width: 100px;">
+          </div>
+          <iframe id="trailer-video" width="100%" height="450px" src="" frameborder="0"
+            allow="autoplay; encrypted-media" allowfullscreen style="display: none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function playTrailer(key) {
+      var videoUrl = "https://www.youtube.com/embed/" + key + "?autoplay=1&rel=0";
+      $('#trailer-video').attr('src', videoUrl);
+      $('#trailer-loader').show();
+      $('#trailer-video').hide();
+
+      // Give it a moment to load
+      $('#trailer-video').on('load', function () {
+        setTimeout(function () {
+          $('#trailer-loader').fadeOut();
+          $('#trailer-video').fadeIn();
+        }, 500);
+      });
+    }
+
+    // Stop video on modal close
+    $('#trailerModal').on('hidden.bs.modal', function () {
+      $('#trailer-video').attr('src', '');
+    });
+  </script>
 </body>
 
 </html>
