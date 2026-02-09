@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import json
+import models
 import pickle
 import requests
 from bs4 import BeautifulSoup
@@ -83,40 +84,74 @@ def get_suggestions():
 
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+
 
 # Database Configuration
-# Using PostgreSQL_PASSWORD from environment variable
-pg_password = os.environ.get("PostgreSQL_PASSWORD")
-if not pg_password:
-    print("WARNING: PostgreSQL_PASSWORD not found in environment variables.")
-    pg_password = "password" # Fallback or error out? user said they have it in .env
+# Using POSTGRESQL_PASSWORD from environment variable
+pg_password = os.environ.get("POSTGRESQL_PASSWORD")
 
-# Construct database URI: postgresql://username:password@localhost/dbname
-# Assuming default username 'postgres' and dbname 'movie_db' as per user
+if not pg_password:
+    raise ValueError("POSTGRESQL_PASSWORD is missing in environment variables")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{pg_password}@localhost/movie_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+
 db.init_app(app)
 
+
 # Authentication Routes
+# @app.route('/signup', methods=['POST'])
+# def signup():
+#     username = request.form['username']
+#     email = request.form['email']
+#     password = request.form['password']
+    
+#     user_exists = User.query.filter_by(email=email).first()
+#     if user_exists:
+#         flash('Email address already exists', 'error')
+#         return redirect(url_for('home')) # Or signup page if separate
+
+#     new_user = User(username=username, email=email, password=generate_password_hash(password))
+#     db.session.add(new_user)
+#     db.session.commit()
+    
+#     flash('Account created! Please sign in.', 'success')
+#     return redirect(url_for('home'))
+
 @app.route('/signup', methods=['POST'])
 def signup():
     username = request.form['username']
     email = request.form['email']
     password = request.form['password']
-    
-    user_exists = User.query.filter_by(email=email).first()
-    if user_exists:
-        flash('Email address already exists', 'error')
-        return redirect(url_for('home')) # Or signup page if separate
 
-    new_user = User(username=username, email=email, password=generate_password_hash(password))
-    db.session.add(new_user)
-    db.session.commit()
-    
-    flash('Account created! Please sign in.', 'success')
-    return redirect(url_for('home'))
+    if User.query.filter_by(email=email).first():
+        flash('Email already exists', 'error')
+        return redirect(url_for('home'))
+
+    if User.query.filter_by(username=username).first():
+        flash('Username already exists', 'error')
+        return redirect(url_for('home'))
+
+    try:
+        new_user = User(
+            username=username,
+            email=email,
+            password=generate_password_hash(password)
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Account created! Please sign in.', 'success')
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        db.session.rollback()
+        print("Signup error:", e)
+        flash('Signup failed. Try again.', 'error')
+        return redirect(url_for('home'))
+
 
 @app.route('/signin', methods=['POST'])
 def signin():
@@ -131,7 +166,9 @@ def signin():
 
     session['user_id'] = user.id
     session['username'] = user.username
+    print(session)
     return redirect(url_for('home'))
+
 
 @app.route('/logout')
 def logout():
