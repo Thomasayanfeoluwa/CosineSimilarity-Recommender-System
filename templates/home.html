@@ -65,10 +65,12 @@
 
   <!-- Flash Messages -->
   <div class="container" style="position: absolute; top: 80px; left: 0; right: 0; z-index: 999;">
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {% for category, message in messages %}
+    <div class="alert {{ 'alert-success' if category == 'success' else 'alert-secondary' }} alert-dismissible fade show"
+      role="alert"
+      style="color: white; background-color: {{ '#28a745' if category == 'success' else '#6c757d' }}; border-color: {{ '#28a745' if category == 'success' else '#6c757d' }};">
       {{ message }}
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -77,6 +79,12 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
+  </div>
+
+  <div id="auth-loader"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+    <img src="{{ url_for('static', filename='sign in.gif') }}" alt="Loading..."
+      style="width: auto; height: auto; max-width: 200px;">
   </div>
 
 
@@ -97,13 +105,14 @@
     <center>
       <h1 style=""> Movie Recommendation System</h1>
     </center>
-    <div class="search-container" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px;">
+    <div class="search-container"
+      style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px;">
       <input type="text" name="movie" class="movie form-control" id="autoComplete" autocomplete="off"
-            placeholder="Enter the Movie Name"
-            style="background-color: #ffffff; border-color: #ffffff; width: 600px; max-width: 90%; color: #181818;" required />
+        placeholder="Enter the Movie Name"
+        style="background-color: #ffffff; border-color: #ffffff; width: 600px; max-width: 90%; color: #181818;"
+        required />
       <button class="btn btn-primary movie-button"
-              style="background-color: #e50914; border-color: #e50914; width: 120px;"
-              disabled>Enter</button>
+        style="background-color: #e50914; border-color: #e50914; width: 120px;" disabled>Enter</button>
     </div>
 
   </div>
@@ -200,9 +209,24 @@
 
   <script>
     const TMDB_API_KEY = "{{ TMDB_API_KEY }}";
-</script>
+  </script>
   <!-- Load our custom JavaScript (recommender.js has all functionality including autocomplete) -->
   <script type="text/javascript" src="{{url_for('static', filename='recommender.js')}}"></script>
+  <script>
+    $(document).ready(function () {
+      // Handle Sign Up Form Submission
+      $('#signupModal form').on('submit', function () {
+        $('#signupModal').modal('hide');
+        $('#auth-loader').css('display', 'flex');
+      });
+
+      // Handle Sign In Form Submission
+      $('#signinModal form').on('submit', function () {
+        $('#signinModal').modal('hide');
+        $('#auth-loader').css('display', 'flex');
+      });
+    });
+  </script>
 
 </body>
 

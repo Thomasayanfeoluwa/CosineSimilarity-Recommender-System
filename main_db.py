@@ -108,14 +108,14 @@ def signup():
     
     user_exists = User.query.filter_by(email=email).first()
     if user_exists:
-        flash('Email address already exists')
+        flash('Email address already exists', 'error')
         return redirect(url_for('home')) # Or signup page if separate
 
     new_user = User(username=username, email=email, password=generate_password_hash(password))
     db.session.add(new_user)
     db.session.commit()
     
-    flash('Account created! Please sign in.')
+    flash('Account created! Please sign in.', 'success')
     return redirect(url_for('home'))
 
 @app.route('/signin', methods=['POST'])
@@ -126,7 +126,7 @@ def signin():
     user = User.query.filter_by(username=username).first()
     
     if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
+        flash('Please check your login details and try again.', 'error')
         return redirect(url_for('home'))
 
     session['user_id'] = user.id
@@ -322,7 +322,7 @@ def add_review():
     # Ideally, we should submit this via AJAX too. 
     # But for simplicity, let's redirect to home with a flash message.
     # Or strict rendering?
-    flash("Review added successfully!")
+    flash("Review added successfully!", 'success')
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
