@@ -132,11 +132,20 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
 # Database Configuration
 # Using POSTGRESQL_PASSWORD from environment variable
-pg_password = os.environ.get("POSTGRESQL_PASSWORD")
+# pg_password = os.environ.get("POSTGRESQL_PASSWORD")
 
-if not pg_password:
-    raise ValueError("POSTGRESQL_PASSWORD is missing in environment variables")
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{pg_password}@localhost/movie_db"
+# if not pg_password:
+#     raise ValueError("POSTGRESQL_PASSWORD is missing in environment variables")
+# app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{pg_password}@localhost/movie_db"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+database_url = os.environ.get("DATABASE_URL")
+
+if not database_url:
+    raise ValueError("DATABASE_URL not found")
+
+database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
