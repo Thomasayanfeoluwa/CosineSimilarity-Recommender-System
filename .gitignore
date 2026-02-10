@@ -7,7 +7,11 @@ __pycache__/
 *.so
 
 # Datasets
-datasets
+datasets/raw
+
+# Track processed dataset
+!datasets/processed/
+!datasets/processed/*
 
 # # models
 # models

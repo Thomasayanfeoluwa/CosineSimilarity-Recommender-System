@@ -12,8 +12,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import db, User, Review, SearchHistory, RecommendationHistory
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
 
 # Import NLP model and Vectorizer
@@ -130,14 +130,17 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
 
-# Database Configuration
-# Using POSTGRESQL_PASSWORD from environment variable
+# # Database Configuration
+# # Using POSTGRESQL_PASSWORD from environment variable
 # pg_password = os.environ.get("POSTGRESQL_PASSWORD")
 
 # if not pg_password:
 #     raise ValueError("POSTGRESQL_PASSWORD is missing in environment variables")
 # app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{pg_password}@localhost/movie_db"
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
 database_url = os.environ.get("DATABASE_URL")
 
 if not database_url:
