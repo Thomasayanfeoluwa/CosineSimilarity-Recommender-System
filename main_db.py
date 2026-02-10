@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import models
-import pickle
+import pickle, gzip
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request, render_template, redirect, url_for, session, flash
@@ -36,8 +36,8 @@ def initiate_similarity():
     # return df, similarity
     global df, similarity
     with open("models/df.pkl", "rb") as f:
-        df = pickle.load(f)
-    with open("models/similarity.pkl", "rb") as f:
+        df = pickle.load(f) 
+    with gzip.open("models/similarity.pkl.gz", "rb") as f:
         similarity = pickle.load(f)
     # return df, similarity
 
