@@ -26,22 +26,31 @@ df = None
 similarity = None
 
 def initiate_similarity():
+    # global df, similarity
+    # df = pd.read_csv("datasets/processed/final_data_processed.csv")
+    # # Create CountVectorizer
+    # CV = CountVectorizer()
+    # count_matrix = CV.fit_transform(df["combined_columns"])
+    # # Compute cosine similarity
+    # similarity = cosine_similarity(count_matrix)
+    # return df, similarity
     global df, similarity
-    df = pd.read_csv("datasets/processed/final_data_processed.csv")
-    # Create CountVectorizer
-    CV = CountVectorizer()
-    count_matrix = CV.fit_transform(df["combined_columns"])
-    # Compute cosine similarity
-    similarity = cosine_similarity(count_matrix)
-    return df, similarity
+    with open("models/df.pkl", "rb") as f:
+        df = pickle.load(f)
+    with open("models/similarity.pkl", "rb") as f:
+        similarity = pickle.load(f)
+    # return df, similarity
 
 def recommend_movies(m):
     global df, similarity
     m = m.lower()
     
     # Initialize if not already done
+    # if df is None or similarity is None:
+    #     df, similarity = initiate_similarity()
     if df is None or similarity is None:
-        df, similarity = initiate_similarity()
+        initiate_similarity()
+
     
     # Check if movie exists (case-insensitive)
     if m not in df["movie_title"].str.lower().values:
@@ -78,9 +87,15 @@ def convert_to_list(my_list):
         print(f"Error converting list: {e}")
         return []
 
+# def get_suggestions():
+#     df = pd.read_csv("datasets/processed/final_data_processed.csv")
+#     return list(df["movie_title"].str.capitalize())
 def get_suggestions():
-    df = pd.read_csv("datasets/processed/final_data_processed.csv")
+    global df
+    if df is None:
+        initiate_similarity()
     return list(df["movie_title"].str.capitalize())
+
 
 def get_trailer(imdb_id):
     api_key = os.environ.get("TMDB_API_KEY")
