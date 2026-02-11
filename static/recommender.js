@@ -311,7 +311,7 @@ function get_movie_posters(arr, my_api_key) {
 }
 
 
-function playTrailer(key) {
-    var videoUrl = "https://www.youtube.com/embed/" + key + "?autoplay=1&rel=0";
-    $('#trailer-video').attr('src', videoUrl);
-}
+// function playTrailer(key) {
+//     var videoUrl = "https://www.youtube.com/embed/" + key + "?autoplay=1&rel=0";
+//     $('#trailer-video').attr('src', videoUrl);
+// }
