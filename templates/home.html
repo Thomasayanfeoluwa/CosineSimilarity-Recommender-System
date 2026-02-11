@@ -208,7 +208,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
 
   <script>
-    const TMDB_API_KEY = "{{ TMDB_API_KEY }}";
+    var TMDB_API_KEY = "{{ TMDB_API_KEY }}";
   </script>
   <!-- Load our custom JavaScript (recommender.js has all functionality including autocomplete) -->
   <script type="text/javascript" src="{{url_for('static', filename='recommender.js')}}"></script>
