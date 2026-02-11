@@ -285,7 +285,9 @@ def logout():
 def home():
     suggestions = MovieEngine.get_suggestions()
     tmdb_api_key = os.environ.get("TMDB_API_KEY")
-    return render_template("home.html", suggestions=suggestions, TMDB_API_KEY=tmdb_api_key)
+    return render_template("home.html", suggestions=suggestions
+    # TMDB_API_KEY=tmdb_api_key
+    )
 
 @app.route("/similarity", methods=["POST"])
 def similarity():
@@ -455,7 +457,8 @@ def recommend():
         trailer_key = MovieEngine.get_trailer(imdb_id)
         return render_template('recommender.html',title=title,poster=poster,overview=overview,vote_average=vote_average,
             vote_count=vote_count,release_date=release_date,runtime=runtime,status=status,genres=genres,
-            movie_cards=movie_cards,reviews=movie_reviews,casts=casts,cast_details=cast_details, TMDB_API_KEY=os.environ.get("TMDB_API_KEY"),
+            movie_cards=movie_cards,reviews=movie_reviews,casts=casts,cast_details=cast_details,
+            #  TMDB_API_KEY=os.environ.get("TMDB_API_KEY"),
             user_logged_in=user_logged_in, trailer_key=trailer_key, imdb_id=imdb_id)
                 
     except Exception as e:
@@ -498,6 +501,64 @@ def add_review():
     # Or strict rendering?
     flash("Review added successfully!", 'success')
     return redirect(url_for('home'))
+
+@app.route("/api/tmdb/search", methods=["GET"])
+def tmdb_search():
+    query = request.args.get('query')
+    api_key = os.environ.get("TMDB_API_KEY")
+    
+    try:
+        response = requests.get(
+            'https://api.themoviedb.org/3/search/movie',
+            params={'api_key': api_key, 'query': query}
+        )
+        return response.json()
+    except Exception as e:
+        logging.error(f"TMDB Search Error: {e}")
+        return {'error': str(e)}, 500
+
+@app.route("/api/tmdb/movie/<int:movie_id>", methods=["GET"])
+def tmdb_movie_details(movie_id):
+    api_key = os.environ.get("TMDB_API_KEY")
+    
+    try:
+        response = requests.get(
+            f'https://api.themoviedb.org/3/movie/{movie_id}',
+            params={'api_key': api_key}
+        )
+        return response.json()
+    except Exception as e:
+        logging.error(f"TMDB Movie Details Error: {e}")
+        return {'error': str(e)}, 500
+
+@app.route("/api/tmdb/movie/<int:movie_id>/credits", methods=["GET"])
+def tmdb_movie_credits(movie_id):
+    api_key = os.environ.get("TMDB_API_KEY")
+    
+    try:
+        response = requests.get(
+            f'https://api.themoviedb.org/3/movie/{movie_id}/credits',
+            params={'api_key': api_key}
+        )
+        return response.json()
+    except Exception as e:
+        logging.error(f"TMDB Credits Error: {e}")
+        return {'error': str(e)}, 500
+
+@app.route("/api/tmdb/person/<int:person_id>", methods=["GET"])
+def tmdb_person_details(person_id):
+    api_key = os.environ.get("TMDB_API_KEY")
+    
+    try:
+        response = requests.get(
+            f'https://api.themoviedb.org/3/person/{person_id}',
+            params={'api_key': api_key}
+        )
+        return response.json()
+    except Exception as e:
+        logging.error(f"TMDB Person Error: {e}")
+        return {'error': str(e)}, 500
+
 
 if __name__ == '__main__':
     # with app.app_context():
