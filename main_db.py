@@ -478,7 +478,7 @@ def add_review():
     movie_review_list = np.array([content])
     # movie_vector = vectorizer.transform(movie_review_list)
     # pred = clf.predict(movie_vector)
-    clf, vectorizer = get_clf_vectorizer()
+    clf, vectorizer = MovieEngine.get_clf_vectorizer()
     # movie_vector = vectorizer.transform([reviews.string])
     movie_vector = vectorizer.transform(movie_review_list)
     pred = clf.predict(movie_vector)
