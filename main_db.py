@@ -4,149 +4,181 @@ import numpy as np
 import json
 import models
 import pickle, gzip
+import faiss
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import db, User, Review, SearchHistory, RecommendationHistory
 from dotenv import load_dotenv
+import logging
+
 load_dotenv()
 
+class MovieEngine:
+    clf = None
+    vectorizer = None
+    df = None
+    svd = None
+    faiss_index = None
 
-# Import NLP model and Vectorizer
-filename = "models/comment.pkl"
-clf = pickle.load(open(filename, "rb"))
-vectorizer = pickle.load(open("models/transformed.pkl", "rb"))
+    @classmethod
+    def get_clf_vectorizer(cls):
+        if cls.clf is None or cls.vectorizer is None:
+            with open("models/comment_sentiments.pkl", "rb") as f:
+                cls.clf = pickle.load(f)
+            with open("models/transformed.pkl", "rb") as f:
+                cls.vectorizer = pickle.load(f)
+        return cls.clf, cls.vectorizer
 
-# Initialize global variables for df and similarity
-df = None
-similarity = None
+    # For movie dataset and faiss engine
+    @classmethod
+    def get_df_engine(cls):
+        if cls.df is None:
+            with open("models/df.pkl", "rb") as f:
+                cls.df = pickle.load(f)
+            cls.df["movie_title_clean"] = cls.df["movie_title"].str.strip().str.lower()
+            # cls.df.lookup_dict = dict(zip(cls.df.movie_title_clean, cls.df.index))
+            # cls.df['lookup_dict'] = cls.df['movie_title_clean'].map(dict(zip(cls.df.movie_title_clean, cls.df.index)))
+            if not hasattr(cls, "lookup_dict"):
+                cls.lookup_dict = dict(zip(cls.df["movie_title_clean"], cls.df.index))
 
-def initiate_similarity():
-    # global df, similarity
-    # df = pd.read_csv("datasets/processed/final_data_processed.csv")
-    # # Create CountVectorizer
-    # CV = CountVectorizer()
-    # count_matrix = CV.fit_transform(df["combined_columns"])
-    # # Compute cosine similarity
-    # similarity = cosine_similarity(count_matrix)
-    # return df, similarity
-    global df, similarity
-    with open("models/df.pkl", "rb") as f:
-        df = pickle.load(f) 
-    with gzip.open("models/similarity.pkl.gz", "rb") as f:
-        similarity = pickle.load(f)
-    # return df, similarity
 
-def recommend_movies(m):
-    global df, similarity
-    m = m.lower()
-    
-    # Initialize if not already done
-    # if df is None or similarity is None:
-    #     df, similarity = initiate_similarity()
-    if df is None or similarity is None:
-        initiate_similarity()
+        if cls.svd is None:
+            with open("models/svd.pkl", "rb") as f:
+                cls.svd = pickle.load(f)
+        
+        if cls.faiss_index is None:
+                cls.faiss_index = faiss.read_index("models/faiss_movies.index")
 
-    
-    # Check if movie exists (case-insensitive)
-    if m not in df["movie_title"].str.lower().values:
-        return("Sorry! The movie you requested for is not currently available. Please check your spelling or try again with another movie")
-    else:
-        # Find the index of the movie (case-insensitive match)
-        i = df[df["movie_title"].str.lower() == m].index[0]
-        lst = list(enumerate(similarity[i]))
-        lst = sorted(lst, key = lambda x:x[1], reverse=True)
-        lst = lst[1:11] # excluding first item since it is the requested movie itself
-        l = []
-        for i in range(len(lst)):
-            a = lst[i][0]
-            l.append(df["movie_title"][a])
-        return l
-    
-# Converting list of string to list (eg. "["abc","def"]" to ["abc","def"])
-def convert_to_list(my_list):
-    try:
-        # If it's already a list, return it
-        if isinstance(my_list, list):
+        return cls.df, cls.svd, cls.faiss_index
+
+
+    @classmethod
+    def get_vectorizer(cls):
+        if cls.vectorizer is None:
+            with open("models/transformed.pkl", "rb") as f:
+                cls.vectorizer = pickle.load(f)
+        return cls.vectorizer
+
+
+    @classmethod
+    def recommend_movies(cls, movie_title):
+        # Initialize if not already done
+        df, svd, faiss_index = cls.get_df_engine()
+        vectorizer = cls.get_vectorizer()
+
+        m_clean = movie_title.strip().lower()
+        # if not hasattr(df, 'lookup_dict'):
+        #     df.lookup_dict = dict(zip(df.movie_title_clean, df.index))
+        lookup_dict = dict(zip(df['movie_title_clean'], df.index))
+        if m_clean not in lookup_dict:
+            return "Sorry! The movie you requested is not available."
+        i = lookup_dict[m_clean]
+        # return "Sorry! The movie you requested is not available."
+        # i = df.lookup_dict[m_clean]
+
+        # --- Generate query embedding properly ---
+        movie_text = df.loc[i, "combined_columns"]
+
+        tfidf_vec = vectorizer.transform([movie_text])
+        query_vector = svd.transform(tfidf_vec).astype("float32")
+
+        # Ensure L2-normalization
+        faiss.normalize_L2(query_vector)
+
+        # Search FAISS index, k=12 to safely exclude the original movie
+        distances, indices = faiss_index.search(query_vector, k=12)
+
+        # Filter out the original movie and return top 10 recommendations
+        neighbor_indices = [idx for idx in indices[0] if idx != i]
+        recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
+
+        return recommendations
+        
+    # Converting list of string to list (eg. "["abc","def"]" to ["abc","def"])
+    @classmethod
+    def convert_to_list(cls, my_list):
+        try:
+            # If it's already a list, return it
+            if isinstance(my_list, list):
+                return my_list
+                
+            # If it's empty or None
+            if not my_list or my_list == "[]":
+                return []
+                
+            my_list = my_list.split('","')
+            if len(my_list) > 0:
+                my_list[0] = my_list[0].replace('["','')
+                my_list[-1] = my_list[-1].replace('"]','')
             return my_list
-            
-        # If it's empty or None
-        if not my_list or my_list == "[]":
+        except Exception as e:
+            logging.info(f"Error converting list: {e}")
             return []
-            
-        my_list = my_list.split('","')
-        if len(my_list) > 0:
-            my_list[0] = my_list[0].replace('["','')
-            my_list[-1] = my_list[-1].replace('"]','')
-        return my_list
-    except Exception as e:
-        print(f"Error converting list: {e}")
-        return []
 
-# def get_suggestions():
-#     df = pd.read_csv("datasets/processed/final_data_processed.csv")
-#     return list(df["movie_title"].str.capitalize())
-def get_suggestions():
-    global df
-    if df is None:
-        initiate_similarity()
-    return list(df["movie_title"].str.capitalize())
+    # def get_suggestions():
+    #     df = pd.read_csv("datasets/processed/final_data_processed.csv")
+    #     return list(df["movie_title"].str.capitalize())
+    @classmethod
+    def get_suggestions(cls):
+        # if df is None:
+        #     initiate_similarity()
+        df, _, _ = cls.get_df_engine()
+        return list(df["movie_title"].str.capitalize())
 
-
-def get_trailer(imdb_id):
-    api_key = os.environ.get("TMDB_API_KEY")
-    if not api_key:
-        return None
-        
-    try:
-        # 1. Get TMDB ID
-        find_url = f"https://api.themoviedb.org/3/find/{imdb_id}?api_key={api_key}&external_source=imdb_id"
-        response = requests.get(find_url)
-        data = response.json()
-        
-        if not data.get('movie_results'):
+    @classmethod
+    def get_trailer(cls, imdb_id):
+        api_key = os.environ.get("TMDB_API_KEY")
+        if not api_key:
             return None
             
-        tmdb_id = data['movie_results'][0]['id']
-        
-        # 2. Get Videos
-        video_url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/videos?api_key={api_key}"
-        video_response = requests.get(video_url)
-        video_data = video_response.json()
-        
-        results = video_data.get('results', [])
-        youtube_videos = [v for v in results if v['site'] == 'YouTube']
-        
-        if not youtube_videos:
+        try:
+            # 1. Get TMDB ID
+            find_url = f"https://api.themoviedb.org/3/find/{imdb_id}?api_key={api_key}&external_source=imdb_id"
+            response = requests.get(find_url)
+            data = response.json()
+            
+            if not data.get('movie_results'):
+                return None
+                
+            tmdb_id = data['movie_results'][0]['id']
+            
+            # 2. Get Videos
+            video_url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/videos?api_key={api_key}"
+            video_response = requests.get(video_url)
+            video_data = video_response.json()
+            
+            results = video_data.get('results', [])
+            youtube_videos = [v for v in results if v['site'] == 'YouTube']
+            
+            if not youtube_videos:
+                return None
+                
+            # 3. Prioritize Trailer > Teaser > Others
+            trailers = [v for v in youtube_videos if v['type'] == 'Trailer']
+            if trailers:
+                return trailers[0]['key']
+                
+            teasers = [v for v in youtube_videos if v['type'] == 'Teaser']
+            if teasers:
+                return teasers[0]['key']
+                
+            # Fallback to whatever is available (Behind the Scenes, etc.)
+            return youtube_videos[0]['key']
+            
+        except Exception as e:
+            logging.info(f"Error fetching trailer: {e}")
             return None
-            
-        # 3. Prioritize Trailer > Teaser > Others
-        trailers = [v for v in youtube_videos if v['type'] == 'Trailer']
-        if trailers:
-            return trailers[0]['key']
-            
-        teasers = [v for v in youtube_videos if v['type'] == 'Teaser']
-        if teasers:
-            return teasers[0]['key']
-            
-        # Fallback to whatever is available (Behind the Scenes, etc.)
-        return youtube_videos[0]['key']
-        
-    except Exception as e:
-        print(f"Error fetching trailer: {e}")
-        return None
 
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
 
-# # Database Configuration
-# # Using POSTGRESQL_PASSWORD from environment variable
+# Database Configuration
+# Using POSTGRESQL_PASSWORD from environment variable
 # pg_password = os.environ.get("POSTGRESQL_PASSWORD")
 
 # if not pg_password:
@@ -218,7 +250,7 @@ def signup():
 
     except Exception as e:
         db.session.rollback()
-        print("Signup error:", e)
+        logging.info(f"Signup error: {e}")
         flash('Signup failed. Try again.', 'error')
         return redirect(url_for('home'))
 
@@ -236,7 +268,7 @@ def signin():
 
     session['user_id'] = user.id
     session['username'] = user.username
-    print(session)
+    logging.info(session)
     return redirect(url_for('home'))
 
 
@@ -249,14 +281,14 @@ def logout():
 @app.route("/")
 @app.route("/home")
 def home():
-    suggestions = get_suggestions()
+    suggestions = MovieEngine.get_suggestions()
     tmdb_api_key = os.environ.get("TMDB_API_KEY")
     return render_template("home.html", suggestions=suggestions, TMDB_API_KEY=tmdb_api_key)
 
 @app.route("/similarity", methods=["POST"])
 def similarity():
     movie = request.form["name"]
-    print(f"Received request for movie: {movie}")
+    logging.info(f"Received request for movie: {movie}")
     
     # Log Search History if user is logged in
     if 'user_id' in session:
@@ -265,8 +297,10 @@ def similarity():
         db.session.add(new_search)
         db.session.commit()
 
-    rec = recommend_movies(movie)
-    print(f"Recommendations: {rec}")
+    rec = MovieEngine.recommend_movies(movie)
+    if isinstance(rec, str):
+        rec = [] 
+    logging.info(f"Recommendations: {rec}")
     
     # Log Recommendation History if user is logged in and rec is valid
     if 'user_id' in session and isinstance(rec, list):
@@ -277,11 +311,11 @@ def similarity():
          db.session.commit()
 
     if type(rec) == type("string"):
-        print("Returning error message")
+        logging.info("Returning error message")
         return rec
     else:
         m_str="---".join(rec)
-        print(f"Returning recommendations: {m_str}")
+        logging.info(f"Returning recommendations: {m_str}")
         return m_str
     
 @app.route("/recommend", methods=["POST"])
@@ -308,25 +342,33 @@ def recommend():
         rec_movies = request.form['rec_movies']
         rec_posters = request.form['rec_posters']
 
-        print(f"Processing recommendation request for: {title}")
+        logging.info(f"Processing recommendation request for: {title}")
 
         # get movie suggestions for auto complete
-        suggestions = get_suggestions()
+        suggestions = MovieEngine.get_suggestions()
 
         # call the convert_to_list function for every string that needs to be converted to list
-        rec_movies = convert_to_list(rec_movies)
-        rec_posters = convert_to_list(rec_posters)
-        cast_names = convert_to_list(cast_names)
-        cast_chars = convert_to_list(cast_chars)
-        cast_profiles = convert_to_list(cast_profiles)
-        cast_bdays = convert_to_list(cast_bdays)
-        cast_bios = convert_to_list(cast_bios)
-        cast_places = convert_to_list(cast_places)
+        rec_movies = MovieEngine.recommend_movies(title)
+        logging.info(f"FAISS rec inside /recommend: {rec_movies}")
+
+        rec_posters = MovieEngine.convert_to_list(rec_posters)
+        cast_names = MovieEngine.convert_to_list(cast_names)
+        cast_chars = MovieEngine.convert_to_list(cast_chars)
+        cast_profiles = MovieEngine.convert_to_list(cast_profiles)
+        cast_bdays = MovieEngine.convert_to_list(cast_bdays)
+        cast_bios = MovieEngine.convert_to_list(cast_bios)
+        cast_places = MovieEngine.convert_to_list(cast_places)
+
+        logging.info(f"Raw rec_movies: {rec_movies}")
+        # logging.info(f"Converted rec_movies: {convert_to_list(rec_movies)}")
+
         
         # convert string to list (eg. "[1,2,3]" to [1,2,3])
-        cast_ids = cast_ids.split(',')
-        cast_ids[0] = cast_ids[0].replace("[","")
-        cast_ids[-1] = cast_ids[-1].replace("]","")
+        # cast_ids = cast_ids.split(',')
+        # cast_ids[0] = cast_ids[0].replace("[","")
+        # cast_ids[-1] = cast_ids[-1].replace("]","")
+        cast_ids = MovieEngine.convert_to_list(cast_ids)
+
 
         # rendering the string to python string
         for i in range(len(cast_bios)):
@@ -335,13 +377,20 @@ def recommend():
         # combining multiple lists as a dictionary which can be passed to the html file so that it can be processed easily and the order of information will be preserved
         movie_cards = {rec_posters[i]: rec_movies[i] for i in range(len(rec_posters))}
         
-        casts = {cast_names[i]:[cast_ids[i], cast_chars[i], cast_profiles[i]] for i in range(len(cast_profiles))}
+        # casts = {cast_names[i]:[cast_ids[i], cast_chars[i], cast_profiles[i]] for i in range(len(cast_profiles))}
+        casts = {name: [cid, char, profile] 
+                for name, cid, char, profile in zip(cast_names, cast_ids, cast_chars, cast_profiles)}
 
-        cast_details = {cast_names[i]:[cast_ids[i], cast_profiles[i], cast_bdays[i], cast_places[i], cast_bios[i]] for i in range(len(cast_places))}
-        print(f"calling imdb api: {'https://www.imdb.com/title/{}/reviews/?ref_=tt_ov_rt'.format(imdb_id)}")
+
+        # cast_details = {cast_names[i]:[cast_ids[i], cast_profiles[i], cast_bdays[i], cast_places[i], cast_bios[i]] for i in range(len(cast_places))}
+        cast_details = {name: [cid, profile, bday, place, bio] 
+                for name, cid, profile, bday, place, bio 
+                in zip(cast_names, cast_ids, cast_profiles, cast_bdays, cast_places, cast_bios)}
+
+        logging.info(f"calling imdb api: {'https://www.imdb.com/title/{}/reviews/?ref_=tt_ov_rt'.format(imdb_id)}")
         
         # 1. Fetch Trailer
-        trailer_key = get_trailer(imdb_id)
+        trailer_key = MovieEngine.get_trailer(imdb_id)
         
         # 2. Fetch Local DB Reviews
         # We query by movie_title (approximate match) or exact if we had imdb_id stored. 
@@ -367,25 +416,32 @@ def recommend():
     
         try:
             response = requests.get(url, headers=headers)
-            print(f"IMDB response status: {response.status_code}")
+            logging.info(f"IMDB response status: {response.status_code}")
             
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'lxml')
                 soup_result = soup.find_all("div", {"class": "ipc-html-content-inner-div"})
-                print(f"Found {len(soup_result)} IMDB reviews")
+                logging.info(f"Found {len(soup_result)} IMDB reviews")
         
+                clf, vectorizer = MovieEngine.get_clf_vectorizer()  # load once
                 for reviews in soup_result:
-                    if reviews.string:
-                        reviews_list.append(reviews.string)
-                        # passing the review to our model
-                        movie_review_list = np.array([reviews.string])
+                    try:
+                        content = reviews.string
+                        if not content or content.strip() == "":
+                            continue
+                        reviews_list.append(content)
+                        movie_review_list = np.array([content])
                         movie_vector = vectorizer.transform(movie_review_list)
                         pred = clf.predict(movie_vector)
-                        reviews_status.append('Good' if pred else 'Bad')
+                        reviews_status.append('Good' if pred[0] == 1 else 'Bad')
+                    except Exception as e:
+                        logging.info(f"Skipping review due to error: {e}")
+
+
             else:
-                print("Failed to retrieve reviews from IMDB")
+                logging.info("Failed to retrieve reviews from IMDB")
         except Exception as e:
-            print(f"IMDB Scraping Error: {e}")
+            logging.info(f"IMDB Scraping Error: {e}")
 
         # combining reviews and comments into a dictionary
         movie_reviews = {reviews_list[i]: reviews_status[i] for i in range(len(reviews_list))}     
@@ -400,9 +456,10 @@ def recommend():
             TMDB_API_KEY=os.environ.get("TMDB_API_KEY"), user_logged_in=user_logged_in, trailer_key=trailer_key)
                 
     except Exception as e:
-        print(f"ERROR in recommend route: {e}")
-        import traceback
-        traceback.print_exc()
+        # logging.info(f"ERROR in recommend route: {e}")
+        # import traceback
+        # traceback.print_exc()
+        logging.exception("Error in /recommend route")
         return str(e), 500
 
 @app.route("/add_review", methods=["POST"])
@@ -417,9 +474,13 @@ def add_review():
     
     # Analyze Sentiment
     movie_review_list = np.array([content])
+    # movie_vector = vectorizer.transform(movie_review_list)
+    # pred = clf.predict(movie_vector)
+    clf, vectorizer = get_clf_vectorizer()
+    # movie_vector = vectorizer.transform([reviews.string])
     movie_vector = vectorizer.transform(movie_review_list)
     pred = clf.predict(movie_vector)
-    sentiment = 'Good' if pred else 'Bad'
+    sentiment = 'Good' if pred[0] == 1 else 'Bad'
     
     new_review = Review(user_id=user_id, movie_title=movie_title, imdb_id=imdb_id, content=content, sentiment=sentiment)
     db.session.add(new_review)
@@ -436,8 +497,13 @@ def add_review():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
+    # with app.app_context():
+    #     db.create_all() # Create tables if not exist
+    #     app.run(debug=True)
     with app.app_context():
-        db.create_all() # Create tables if not exist
+        db.create_all()
+        MovieEngine.get_clf_vectorizer()  # preload
+        MovieEngine.get_df_engine()       # preload FAISS, SVD, df
         # app.run(debug=True)
     port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port, debug=True)
