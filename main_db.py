@@ -455,7 +455,7 @@ def recommend():
         return render_template('recommender.html',title=title,poster=poster,overview=overview,vote_average=vote_average,
             vote_count=vote_count,release_date=release_date,runtime=runtime,status=status,genres=genres,
             movie_cards=movie_cards,reviews=movie_reviews,casts=casts,cast_details=cast_details, 
-            TMDB_API_KEY=os.environ.get("TMDB_API_KEY"), user_logged_in=user_logged_in, trailer_key=trailer_key)
+            TMDB_API_KEY=os.environ.get("TMDB_API_KEY"), user_logged_in=user_logged_in, trailer_key=trailer_key, imdb_id=imdb_id)
                 
     except Exception as e:
         # logging.info(f"ERROR in recommend route: {e}")
