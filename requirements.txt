@@ -4,6 +4,7 @@ python-dotenv
 nltk
 gunicorn
 requests
+Flask-Migrate
 beautifulsoup4
 Flask
 flask-sqlalchemy
