@@ -350,7 +350,7 @@ def recommend():
         suggestions = MovieEngine.get_suggestions()
 
         # call the convert_to_list function for every string that needs to be converted to list
-        rec_movies = MovieEngine.recommend_movies(title)
+        rec_movies = MovieEngine.convert_to_list(request.form['rec_movies'])
         logging.info(f"FAISS rec inside /recommend: {rec_movies}")
 
         rec_posters = MovieEngine.convert_to_list(rec_posters)
@@ -366,10 +366,10 @@ def recommend():
 
         
         # convert string to list (eg. "[1,2,3]" to [1,2,3])
-        # cast_ids = cast_ids.split(',')
-        # cast_ids[0] = cast_ids[0].replace("[","")
-        # cast_ids[-1] = cast_ids[-1].replace("]","")
-        cast_ids = MovieEngine.convert_to_list(cast_ids)
+        cast_ids = cast_ids.split(',')
+        cast_ids[0] = cast_ids[0].replace("[","")
+        cast_ids[-1] = cast_ids[-1].replace("]","")
+        # cast_ids = MovieEngine.convert_to_list(cast_ids)
 
 
         # rendering the string to python string
