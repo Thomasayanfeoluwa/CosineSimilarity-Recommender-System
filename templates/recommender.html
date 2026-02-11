@@ -160,6 +160,7 @@
       <h3>Leave a Review</h3>
       <form action="{{ url_for('add_review') }}" method="post" style="width: 60%; margin: 0 auto;">
         <input type="hidden" name="movie_title" value="{{title}}">
+        <input type="hidden" name="imdb_id" value="{{imdb_id}}">
         <div class="form-group">
           <textarea class="form-control" name="review_content" rows="3" placeholder="Write your review here..." required
             style="background-color: rgba(0,0,0,0.5); color: white; border-color: white;"></textarea>
