@@ -14,4 +14,7 @@ numpy
 scikit-learn
 urllib3
 faiss-cpu
-lief
+flask-migrate
+sqlalchemy
+psycopg2-binary
+python-dotenv
