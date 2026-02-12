@@ -80,7 +80,7 @@ class MovieEngine:
         vectorizer = cls.get_vectorizer()
 
         m_clean = movie_title.strip().lower()
-        lookup_dict = dict(zip(df["movies_title_clean"], df.index))
+        lookup_dict = dict(zip(df["movie_title_clean"], df.index))
         if m_clean not in lookup_dict:
             return "Sorry! The movie you requested for is not available."
         i = lookup_dict[m_clean]
@@ -90,7 +90,7 @@ class MovieEngine:
         query_vector = svd.transform(tfidf_vec).astype("float32")
         faiss.normalize_L2(query_vector)
         distance, indices = faiss_index.search(query_vector, k=12)
-        neighbor_indices = [idx for idx in indices[0] if idx != 1]
+        neighbor_indices = [idx for idx in indices[0] if idx != i]
         recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
         return recommendations
 
@@ -119,9 +119,10 @@ class MovieEngine:
 
 
     @classmethod
-    def get_trailer(cls):
+    def get_trailer(cls, imdb_id):
         api_key = os.environ.get("TMDB_API_KEY")
         if not api_key:
+            logging.error("TMDB_API_KEY not found in environment variables!")
             return None
         try:
             find_url = f"https://api.themoviedb.org/3/find/{imdb_id}?api_key={api_key}&external_source=imdb_id"

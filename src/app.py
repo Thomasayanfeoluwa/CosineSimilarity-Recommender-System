@@ -7,10 +7,12 @@ from flask_migrate import Migrate
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Review, SearchHistory, RecommendationHistory
+from services.movie_engine import MovieEngine
+from services.tmdb_service import TMDBService
+from services.sentiment_service import SentimentService
 from dotenv import load_dotenv
-from service.movie_engine import MovieEngine
-from service.tmdb_service import TMDBService
-from service.sentiment_service import SentimentService
+
+
 
 load_dotenv()
 
