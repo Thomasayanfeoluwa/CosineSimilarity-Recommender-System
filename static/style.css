@@ -8,7 +8,6 @@
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 1);  /* White background */
-    display: none;
     justify-content: center;
     align-items: center;
     pointer-events: none;
@@ -288,8 +287,11 @@ h6 {
     }
     
     /* Loader - Mobile */
-    #loader {
-        background-size: 60% !important;  /* Not used with spinner, but kept for compatibility */
+    #loader::after {
+        width: 50px !important;
+        height: 50px !important;
+        border-width: 6px !important;
+        border-top-width: 6px !important;
     }
     
     /* Modal */
@@ -361,9 +363,10 @@ h6 {
     
     /* Loader - Tablet */
     #loader::after {
-        width: 70px;
-        height: 70px;
-        border-width: 7px;
+        width: 70px !important;
+        height: 70px !important;
+        border-width: 7px !important;
+        border-top-width: 7px !important;
     }
 }
 
@@ -381,9 +384,17 @@ h6 {
     .modal-body {
         display: flex;
     }
+    
+    /* Loader - Desktop Large */
+    #loader::after {
+        width: 80px !important;
+        height: 80px !important;
+        border-width: 8px !important;
+        border-top-width: 8px !important;
+    }
 }
 
-/* ============ DESKTOP (≥651px) ============ */
+/* ============ DESKTOP SMALL (651px - 991px is already covered above, this is for 651px+) ============ */
 @media only screen and (min-width: 651px) {
     .poster-sm {
         display: none;
@@ -392,13 +403,6 @@ h6 {
     #mcontent {
         display: flex;
         flex-wrap: nowrap;
-    }
-
-    /* Loader - Desktop */
-    #loader::after {
-        width: 80px;
-        height: 80px;
-        border-width: 8px;
     }
 }
 
