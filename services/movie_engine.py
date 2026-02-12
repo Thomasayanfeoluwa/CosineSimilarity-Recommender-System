@@ -7,8 +7,6 @@ import os
 import logging
 from bs4 import BeautifulSoup
 
-
-
 logging.basicConfig(level=logging.INFO)
 
 class MovieEngine:
@@ -18,58 +16,74 @@ class MovieEngine:
     svd = None
     faiss_index = None
 
+    @classmethod
+    def _get_project_root(cls):
+        """Helper method to get project root"""
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        return os.path.dirname(current_dir)
 
     @classmethod
     def get_clf_vectorizer(cls):
         if cls.clf is None or cls.vectorizer is None:
             try:
-                with open("models/comment_sentiments.pkl", "rb") as f:
+                project_root = cls._get_project_root()
+                
+                model_path = os.path.join(project_root, "models", "comment_sentiments.pkl")
+                vectorizer_path = os.path.join(project_root, "models", "transformed.pkl")
+
+                with open(model_path, "rb") as f:
                     cls.clf = pickle.load(f)
-                with open("models/transformed.pkl", "rb") as f:
+                with open(vectorizer_path, "rb") as f:
                     cls.vectorizer = pickle.load(f)
-                logging.info(f"Models Loaded Successfully!")
+                logging.info(f"✅ Models Loaded Successfully from {project_root}/models/")
             except FileNotFoundError as e:
-                logging.error(f"Models Loading Failed: {e}")
+                logging.error(f"❌ Models Loading Failed: {e}")
                 raise e
         return cls.clf, cls.vectorizer
 
-    
     @classmethod
     def get_df_engine(cls):
         if cls.df is None:
             try:
-                with open("models/df.pkl", "rb") as f:
+                project_root = cls._get_project_root()
+                
+                df_path = os.path.join(project_root, "models", "df.pkl")
+                svd_path = os.path.join(project_root, "models", "svd.pkl")
+                faiss_path = os.path.join(project_root, "models", "faiss_movies.index")
+                
+                with open(df_path, "rb") as f:
                     cls.df = pickle.load(f)
                 cls.df["movie_title_clean"] = cls.df["movie_title"].str.strip().str.lower()
                 if not hasattr(cls, "lookup_dict"):
                     cls.lookup_dict = dict(zip(cls.df["movie_title_clean"], cls.df.index))
 
                 if cls.svd is None:
-                    with open("models/svd.pkl", "rb") as f:
+                    with open(svd_path, "rb") as f:
                         cls.svd = pickle.load(f) 
                     
                 if cls.faiss_index is None:
-                    cls.faiss_index = faiss.read_index("models/faiss_movies.index")  
+                    cls.faiss_index = faiss.read_index(faiss_path)  
 
-                logging.info(f"Models Loaded Successfully!")
+                logging.info(f"✅ FAISS Models Loaded Successfully from {project_root}/models/")
             except FileNotFoundError as e:
-                logging.error(f"Models Loading Failed: {e}")
+                logging.error(f"❌ FAISS Models Loading Failed: {e}")
                 raise e
         return cls.df, cls.svd, cls.faiss_index
-
 
     @classmethod
     def get_vectorizer(cls):
         if cls.vectorizer is None:
             try:
-                with open("models/transformed.pkl", "rb") as f:
+                project_root = cls._get_project_root()
+                vectorizer_path = os.path.join(project_root, "models", "transformed.pkl")
+                
+                with open(vectorizer_path, "rb") as f:
                     cls.vectorizer = pickle.load(f)
-                logging.info(f"Model Loaded Successfully!")
+                logging.info(f"✅ Vectorizer Loaded Successfully!")
             except FileNotFoundError as e:
-                logging.error(f"Model Loading Failed: {e}")
+                logging.error(f"❌ Vectorizer Loading Failed: {e}")
                 raise e
         return cls.vectorizer
-
 
     @classmethod
     def recommend_movies(cls, movie_title):

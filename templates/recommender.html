@@ -188,7 +188,7 @@
         </thead>
 
         <tbody>
-          {% for review, status in reviews.items() if not reviews.hidden %}
+          {% for review, status in reviews.items() %}
           <tr style="background-color:rgba(0, 0, 0, 0.5);">
             <td>{{review}}</td>
             <td>

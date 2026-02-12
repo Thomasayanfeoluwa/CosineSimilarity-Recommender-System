@@ -13,8 +13,11 @@ class SentimentService:
     @classmethod
     def load_models(cls):
         if cls.clf is None or cls.vectorizer is None:
-            model_path = os.path.join("models", "comment_sentiments.pkl")
-            vectorizer_path = os.path.join("models", "transformed.pkl")
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(current_dir)
+
+            model_path = os.path.join(project_root, "models", "comment_sentiments.pkl")
+            vectorizer_path = os.path.join(project_root, "models", "transformed.pkl")
             try:
                 with open(model_path, "rb") as f:
                     cls.clf = pickle.load(f)
