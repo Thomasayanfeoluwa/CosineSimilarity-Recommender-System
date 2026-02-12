@@ -1,3 +1,34 @@
+/* ============ CSS SPINNER LOADER (with white background) ============ */
+#loader {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 1);  /* White background */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+#loader::after {
+    content: "";
+    width: 80px;
+    height: 80px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #e50914;  /* Netflix red */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .movie {
 	color: #fff;
 	margin-left: auto;
@@ -8,14 +39,14 @@
 .movie-content {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content:space-around;
+	justify-content: space-around;
 }
 
 .movie-content > div {
-    margin:20px;
+    margin: 20px;
 }
 
-.btn-block{
+.btn-block {
 	width: 15%;
 	text-align: center;
 	margin-left: auto;
@@ -27,6 +58,8 @@
 	background-image: url("../static/angel.jpg");
 	background-color: #181818;
 	font-family: 'Noto Sans JP', sans-serif;
+	background-size: cover;
+	background-attachment: fixed;
 }
 
 #details {
@@ -35,11 +68,11 @@
 
 .footer {
 	color: #e4e0e0;
-	text-align:right;
+	text-align: right;
 	position: fixed;
- 	bottom: 20px;
- 	right: 20px;
- 	width: 100%;
+	bottom: 20px;
+	right: 20px;
+	width: 100%;
 }
 
 h1 {
@@ -48,31 +81,26 @@ h1 {
     font-weight: bold;
     margin-top: 30px;
     text-shadow: #000000 0px 0px 13px;
- }
+}
 
 .github-corner:hover .octo-arm {
   	animation: octocat-wave 560ms ease-in-out;
 }
 
 @keyframes octocat-wave {
-  0%,
-  100% {
-    transform: rotate(0)
+  0%, 100% {
+    transform: rotate(0);
   }
-
-  20%,
-  60% {
-    transform: rotate(-25deg)
+  20%, 60% {
+    transform: rotate(-25deg);
   }
-
-  40%,
-  80% {
-    transform: rotate(10deg)
+  40%, 80% {
+    transform: rotate(10deg);
   }
 }
 
 #autoComplete {
-  background-position: 98% ;
+    background-position: 98%;
 }
 
 #name {
@@ -81,170 +109,365 @@ h1 {
 }
 
 h6 {
-    margin-bottom: 20px;  
+    margin-bottom: 20px;
 }
 
+/* ============ MOBILE OPTIMIZATION (≤650px) ============ */
 @media only screen and (max-width: 650px) {
+    /* Header */
+    h1 {
+        font-size: 24px !important;
+        margin-top: 20px !important;
+        padding: 0 15px !important;
+        text-align: center !important;
+    }
+    
+    /* Search Container */
+    .search-container {
+        width: 90% !important;
+        margin: 20px auto !important;
+        padding: 0 10px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+    
+    #autoComplete {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+    }
+    
+    .movie-button {
+        width: 100px !important;
+        font-size: 14px !important;
+        white-space: nowrap !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Movie Details Section */
     #mcontent {
-      display: block;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 15px !important;
     }
+    
     .poster-lg {
-      display: none;
+        display: none;
     }
+    
+    .poster-sm {
+        display: block !important;
+        text-align: center !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .poster-sm img {
+        width: 80% !important;
+        height: auto !important;
+        max-width: 250px !important;
+        margin: 0 auto !important;
+        border-radius: 20px !important;
+    }
+    
     #details {
-		margin-left: 30px;
-	}
+        margin-left: 0 !important;
+        padding: 0 15px !important;
+        width: 100% !important;
+    }
+    
+    #details h6 {
+        font-size: 14px !important;
+        word-wrap: break-word !important;
+        margin-bottom: 15px !important;
+        line-height: 1.5 !important;
+    }
+    
+    #overview {
+        max-width: 100% !important;
+        font-size: 14px !important;
+    }
+    
+    /* Play Trailer Button */
+    .btn-danger {
+        width: 100% !important;
+        margin: 10px 0 !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Cast and Movie Cards */
+    .movie-content {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 10px !important;
+    }
+    
+    .castcard, .card {
+        width: 90% !important;
+        max-width: 280px !important;
+        margin: 15px auto !important;
+    }
+    
+    .cast-img, .card-img-top {
+        width: 100% !important;
+        height: auto !important;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .card-body {
+        padding: 15px !important;
+    }
+    
+    .card-title {
+        font-size: 16px !important;
+        margin-bottom: 5px !important;
+    }
+    
+    /* Reviews Section */
+    h2, h3 {
+        font-size: 20px !important;
+        padding: 0 15px !important;
+        margin-top: 20px !important;
+    }
+    
+    h5 {
+        font-size: 14px !important;
+        padding: 0 15px !important;
+    }
+    
+    .col-md-12 {
+        width: 95% !important;
+        padding: 0 10px !important;
+        margin: 0 auto !important;
+        overflow-x: auto !important;
+    }
+    
+    .table {
+        width: 100% !important;
+        font-size: 12px !important;
+    }
+    
+    .table td {
+        word-break: break-word !important;
+        padding: 10px 8px !important;
+        border-width: 1px !important;
+    }
+    
+    /* Review Form */
+    .container form {
+        width: 90% !important;
+        padding: 0 10px !important;
+    }
+    
+    textarea.form-control {
+        font-size: 14px !important;
+        padding: 12px !important;
+    }
+    
+    /* Footer */
+    .footer {
+        position: relative !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        text-align: center !important;
+        padding: 20px 0 !important;
+        margin-top: 40px !important;
+        font-size: 14px !important;
+    }
+    
+    /* GitHub Corner */
+    .github-corner svg {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    /* Loader - Mobile */
     #loader {
-		display: none;
-		position: fixed;
-		z-index: 100;
-		left: 0;
-		top:0;
-		width: 100%;
-		height: 100%;
-		background-image: url("../static/movie_loader.gif");
-		background-size: 40%;
-		background-position: 50% 50%;
-		background-color: rgba(255, 255, 255, 1);
-		background-repeat: no-repeat;
-		-webkit-transition: background-image 0.2s ease-in-out;
-		transition: background-image 0.2s ease-in-out;
-	}
-
-	#loader-text {
-		vertical-align: middle;
-		color:white;
-	}
-
-	#autoComplete {
-	  background-position: 97% ;
-	}
-	
-	svg[data-toggle=tooltip] {
-		width: 50px;
-		height: 50px;
-	}
+        background-size: 60% !important;  /* Not used with spinner, but kept for compatibility */
+    }
+    
+    /* Modal */
+    .modal-dialog {
+        margin: 20px !important;
+        width: auto !important;
+    }
+    
+    .modal-content {
+        border-radius: 15px !important;
+    }
+    
+    .modal-body {
+        padding: 20px !important;
+    }
+    
+    .profile-pic {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 200px !important;
+        margin: 0 auto 20px !important;
+        display: block !important;
+    }
 }
 
-@media only screen and (max-width: 991px) {
-	.modal-body{
-		display: block;
-	}
-	.profile-pic {
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-		margin-bottom: 20px;
-	}
+/* ============ TABLET OPTIMIZATION (651px - 991px) ============ */
+@media only screen and (min-width: 651px) and (max-width: 991px) {
+    .poster-sm {
+        display: none;
+    }
+    
+    #mcontent {
+        display: flex;
+        flex-wrap: nowrap;
+        padding: 20px;
+    }
+    
+    .poster-lg img {
+        width: 200px !important;
+        height: auto !important;
+        margin-left: 20px !important;
+    }
+    
+    #details {
+        margin-left: 30px;
+    }
+    
+    .movie-content {
+        justify-content: center;
+    }
+    
+    .castcard, .card {
+        width: 45% !important;
+        margin: 15px !important;
+    }
+    
+    .modal-body {
+        display: block;
+    }
+    
+    .profile-pic {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        margin-bottom: 20px;
+        width: 200px !important;
+        height: auto !important;
+    }
+    
+    /* Loader - Tablet */
+    #loader::after {
+        width: 70px;
+        height: 70px;
+        border-width: 7px;
+    }
 }
+
+/* ============ DESKTOP (≥992px) ============ */
 @media only screen and (min-width: 992px) {
-	.modal-body {
-		display: flex;
-	}
+    .poster-sm {
+        display: none;
+    }
+    
+    #mcontent {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    
+    .modal-body {
+        display: flex;
+    }
 }
 
+/* ============ DESKTOP (≥651px) ============ */
 @media only screen and (min-width: 651px) {
-  .poster-sm {
-    display: none;
-   }
+    .poster-sm {
+        display: none;
+    }
 
-	#mcontent {
-		display: flex;
-		flex-wrap: nowrap;
-	}
+    #mcontent {
+        display: flex;
+        flex-wrap: nowrap;
+    }
 
-	#loader {
-		display: none;
-		position: fixed;
-		z-index: 100;
-		left: 0;
-		top:0;
-		width: 100%;
-		height: 100%;
-		background-image: url("../static/movie_loader.gif");
-		background-size: 20%;
-		background-position: 50% 50%;
-		background-color: rgba(255, 255, 255, 1);
-		background-repeat: no-repeat;
-		-webkit-transition: background-image 0.2s ease-in-out;
-		transition: background-image 0.2s ease-in-out;
-	}
-
-	#loader-text {
-		vertical-align: middle;
-		color:white;
-	}
-
+    /* Loader - Desktop */
+    #loader::after {
+        width: 80px;
+        height: 80px;
+        border-width: 8px;
+    }
 }
 
-.poster{
+/* ============ COMMON STYLES ============ */
+.poster {
     -webkit-box-shadow: 0px 1px 15px 4px rgba(250,250,250,1);
     -moz-box-shadow: 0px 1px 15px 4px rgba(250,250,250,1);
     box-shadow: 0px 1px 15px 4px rgba(250,250,250,1);
 }
 
-.card:hover {
-	cursor: pointer;
-}
-
-.castcard:hover {
+.card:hover, .castcard:hover {
     cursor: pointer;
 }
 
 .cast-img {
-	filter: brightness(100%);
-	-moz-transition: all 0.75s ease;
+    filter: brightness(100%);
+    -moz-transition: all 0.75s ease;
     -webkit-transition: all 0.75s ease;
-	transition: all 0.75s ease;
+    transition: all 0.75s ease;
 }
 
-
 .cast-img:hover {
-	filter: brightness(50%);
-	-moz-transition: all 0.75s ease;
+    filter: brightness(50%);
+    -moz-transition: all 0.75s ease;
     -webkit-transition: all 0.75s ease;
     transition: all 0.75s ease;
 }
 
 .fig {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	backdrop-filter: brightness(50%);
-	position: absolute;
-	bottom: 0px;
-	top: 0px;
-	right: 0px;
-	left: 0px;
-	opacity: 0;
-	-moz-transition: all 0.75s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: brightness(50%);
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    opacity: 0;
+    -moz-transition: all 0.75s ease;
     -webkit-transition: all 0.75s ease;
     transition: all 0.75s ease;
 }
 
 .fig:hover {
-	opacity: 1;
-	backdrop-filter:br;
-	-moz-transition: all 0.75s ease;
+    opacity: 1;
+    backdrop-filter: brightness(50%);
+    -moz-transition: all 0.75s ease;
     -webkit-transition: all 0.75s ease;
     transition: all 0.75s ease;
 }
 
 .card-btn {
-	border-radius: 20px;
+    border-radius: 20px;
 }
 
 .imghvr {
-	position: relative;
+    position: relative;
 }
 
 .table td {
     border-color: white;
-    border-style:solid; 
-    border-width:1px;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .fail {
-	display: none;
-	color: white;
+    display: none;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
