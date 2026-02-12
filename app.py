@@ -14,6 +14,67 @@ from dotenv import load_dotenv
 
 
 
+
+
+# DEBUG ENVIRONMENT VARIABLES - REMOVE LATER
+import os
+import sys
+
+print("="*70)
+print("🔍 RENDER ENVIRONMENT DEBUG")
+print("="*70)
+print(f"Current directory: {os.getcwd()}")
+print(f"Script location: {__file__}")
+print(f"Python version: {sys.version}")
+print("\n📁 Files in current directory:")
+try:
+    for f in os.listdir('.')[:10]:
+        print(f"  - {f}")
+except:
+    pass
+
+print("\n🔧 Environment Variables:")
+env_vars = ['TMDB_API_KEY', 'DATABASE_URL', 'FLASK_SECRET_KEY', 'PORT']
+for var in env_vars:
+    value = os.environ.get(var)
+    if value:
+        masked = value[:10] + '...' + value[-5:] if len(value) > 15 else '[SET]'
+        print(f"  ✅ {var}: {masked}")
+    else:
+        print(f"  ❌ {var}: NOT SET")
+
+print("\n📁 Checking models folder:")
+models_paths = [
+    "models",
+    "../models",
+    "/opt/render/project/src/models",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "models"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models")
+]
+
+for path in models_paths:
+    exists = os.path.exists(path)
+    is_dir = os.path.isdir(path) if exists else False
+    if exists:
+        print(f"  ✅ {path} - {'📁 DIR' if is_dir else '📄 FILE'}")
+        if is_dir:
+            try:
+                files = os.listdir(path)
+                print(f"     Files: {', '.join(files[:5])}{'...' if len(files) > 5 else ''}")
+            except:
+                pass
+    else:
+        print(f"  ❌ {path} - NOT FOUND")
+
+print("="*70)
+
+
+
+
+
+
+
+
 load_dotenv()
 
 app = Flask(__name__)
