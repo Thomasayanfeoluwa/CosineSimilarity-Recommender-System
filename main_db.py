@@ -430,7 +430,9 @@ def recommend():
                 clf, vectorizer = MovieEngine.get_clf_vectorizer()  # load once
                 for reviews in soup_result:
                     try:
-                        content = reviews.string
+                        # content = reviews.string
+                        content = reviews.get_text(strip=True)
+                        logging.info(f"Review content: {content[:100]}...")
                         if not content or content.strip() == "":
                             continue
                         reviews_list.append(content)
