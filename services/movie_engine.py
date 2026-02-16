@@ -128,38 +128,38 @@ class MovieEngine:
         
         return " ".join(feature_parts)
 
-        @classmethod
-        def get_homepage_recommendations(cls, count=20):
-        """Return homepage recommendations with mix of popular and diverse movies"""
-        df, _, _ = cls.get_df_engine()
-        
-        recommendations = []
-        
-        # 1. Top 10 popular movies (50%)
-        if 'vote_average' in df.columns:
-            popular = df.nlargest(count//2, 'vote_average')['movie_title'].tolist()
-            recommendations.extend(popular)
-        
-        # 2. Genre-diverse movies (50%)
-        all_genres = set()
-        for genres in df['genres'].dropna():
-            all_genres.update(genres.split('|'))
-        
-        remaining = count - len(recommendations)
-        movies_per_genre = max(1, remaining // len(all_genres))
-        
-        for genre in list(all_genres)[:5]:
-            genre_movies = df[df['genres'].str.contains(genre, na=False)]
-            # Exclude already selected movies
-            genre_movies = genre_movies[~genre_movies['movie_title'].isin(recommendations)]
-            if not genre_movies.empty:
-                if 'vote_average' in df.columns:
-                    top_in_genre = genre_movies.nlargest(movies_per_genre, 'vote_average')
-                else:
-                    top_in_genre = genre_movies.head(movies_per_genre)
-                recommendations.extend(top_in_genre['movie_title'].tolist())
-        
-        return recommendations[:count]
+    @classmethod
+    def get_homepage_recommendations(cls, count=20):
+    """Return homepage recommendations with mix of popular and diverse movies"""
+    df, _, _ = cls.get_df_engine()
+    
+    recommendations = []
+    
+    # 1. Top 10 popular movies (50%)
+    if 'vote_average' in df.columns:
+        popular = df.nlargest(count//2, 'vote_average')['movie_title'].tolist()
+        recommendations.extend(popular)
+    
+    # 2. Genre-diverse movies (50%)
+    all_genres = set()
+    for genres in df['genres'].dropna():
+        all_genres.update(genres.split('|'))
+    
+    remaining = count - len(recommendations)
+    movies_per_genre = max(1, remaining // len(all_genres))
+    
+    for genre in list(all_genres)[:5]:
+        genre_movies = df[df['genres'].str.contains(genre, na=False)]
+        # Exclude already selected movies
+        genre_movies = genre_movies[~genre_movies['movie_title'].isin(recommendations)]
+        if not genre_movies.empty:
+            if 'vote_average' in df.columns:
+                top_in_genre = genre_movies.nlargest(movies_per_genre, 'vote_average')
+            else:
+                top_in_genre = genre_movies.head(movies_per_genre)
+            recommendations.extend(top_in_genre['movie_title'].tolist())
+    
+    return recommendations[:count]
 
     @classmethod
     def recommend_movies(cls, movie_title):
