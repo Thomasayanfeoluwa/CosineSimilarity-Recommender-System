@@ -271,7 +271,7 @@ def tmdb_person_details(person_id):
 def health():
     # This keeps the database connection alive
     db.session.execute('SELECT 1')
-    return {'status': 'ok'}, 200
+    return 'ok', 200
 
 if __name__ == '__main__':
     with app.app_context():
