@@ -295,6 +295,50 @@ class MovieEngine:
             logging.info(f"Error fetching trailer: {e}")
             return None
 
+class EnrichedMovie:
+    def __init__(self, title, static_data=None):
+        self.title = title
+        self.static_data = static_data or {}
+        self.live_data = None
+        self.vote_average = None
+        self.popularity = None
+        self._fetch_live_data()
+    
+    def _fetch_live_data(self):
+        try:
+            from services.tmdb_service import TMDBService
+            result = TMDBService.search_movie(self.title)
+            if result.get('results') and len(result['results']) > 0:
+                movie_data = result['results'][0]
+                self.live_data = movie_data
+                self.vote_average = movie_data.get('vote_average', 0)
+                self.popularity = movie_data.get('popularity', 0)
+                
+                # Get detailed info for more signals
+                details = TMDBService.get_movie_details(movie_data['id'])
+                if details:
+                    self.vote_count = details.get('vote_count', 0)
+        except Exception as e:
+            logging.error(f"Error fetching live data for {self.title}: {e}")
+    
+    def get_quality_score(self, base_score=1.0):
+        """Combine static quality with live popularity"""
+        score = base_score
+        
+        # Live popularity signals
+        if self.popularity:
+            # Normalize popularity (TMDB popularity can be 0-1000+)
+            score += min(self.popularity / 100, 5)  # Cap at +5
+        
+        if self.vote_average:
+            # vote_average is 0-10
+            score += self.vote_average / 2  # Convert to 0-5 scale
+        
+        if hasattr(self, 'vote_count') and self.vote_count:
+            # More votes = more reliable
+            score += min(self.vote_count / 1000, 2)  # Cap at +2
+        
+        return score
 
 if __name__ == "__main__":
     MovieEngine().get_df_engine()
