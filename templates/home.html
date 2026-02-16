@@ -117,13 +117,13 @@
       <button class="btn btn-primary movie-button"
         style="background-color: #e50914; border-color: #e50914; width: 120px;" disabled>Enter</button>
     </div>
-
   </div>
-  
-{% if homepage_movies %}
-<div class="homepage-recommendations" style="margin-top: 40px; margin-bottom: 40px;">
-    <center>
-        <!-- Netflix-style gradient text -->
+
+  <!-- ============ HOMEPAGE RECOMMENDATIONS (will be hidden during search) ============ -->
+  <div id="homepage-recommendations">
+    {% if homepage_movies %}
+    <div class="homepage-recommendations" style="margin-top: 40px; margin-bottom: 40px;">
+      <center>
         <h3 style="
             color: transparent;
             background: linear-gradient(135deg, #e50914 0%, #ff6b6b 100%);
@@ -148,100 +148,92 @@
         ">
             Discover top-rated movies handpicked for you
         </h5>
-    </center>
-    
-    <div class="movie-content">
+      </center>
+      
+      <div class="movie-content">
         {% for movie in homepage_movies %}
         <div class="card" style="width: 15rem; cursor: pointer;" 
              title="{{ movie.title }}" 
              onclick="searchDefault('{{ movie.title }}')">
+          
+          <div class="imghvr" style="position: relative;">
+            <img class="card-img-top" 
+                 height="360" 
+                 width="240" 
+                 alt="{{ movie.title }} - poster" 
+                 src="{{ movie.poster }}"
+                 style="border-radius: 10px 10px 0 0; object-fit: cover;"
+                 onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'">
             
-            <div class="imghvr" style="position: relative;">
-                <!-- Movie Poster -->
-                <img class="card-img-top" 
-                     height="360" 
-                     width="240" 
-                     alt="{{ movie.title }} - poster" 
-                     src="{{ movie.poster }}"
-                     style="border-radius: 10px 10px 0 0; object-fit: cover;"
-                     onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'">
-                
-                <!-- Play Button Overlay -->
-                <figcaption class="fig" style="
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: rgba(0,0,0,0.6);
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    border-radius: 10px 10px 0 0;">
-                    <button class="card-btn btn btn-danger" style="border-radius: 25px; padding: 8px 20px;">
-                        <i class="fa fa-play-circle"></i> Play
-                    </button>
-                </figcaption>
-            </div>
-            
-            <!-- Movie Title - Proper Case Fix -->
-            <div class="card-body" style="background-color: #2a2a2a; border-radius: 0 0 10px 10px; padding: 12px;">
-                <h5 class="card-title" style="
-                    color: white; 
-                    text-align: center; 
-                    margin: 0; 
-                    font-size: 16px;
-                    font-weight: 500;
-                    text-transform: capitalize;  /* ← Fixes lowercase issue */
-                ">
-                    {{ movie.title }}
-                </h5>
-            </div>
+            <figcaption class="fig" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0,0,0,0.6);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                border-radius: 10px 10px 0 0;">
+              <button class="card-btn btn btn-danger" style="border-radius: 25px; padding: 8px 20px;">
+                <i class="fa fa-play-circle"></i> Play
+              </button>
+            </figcaption>
+          </div>
+          
+          <div class="card-body" style="background-color: #2a2a2a; border-radius: 0 0 10px 10px; padding: 12px;">
+            <h5 class="card-title" style="
+                color: white; 
+                text-align: center; 
+                margin: 0; 
+                font-size: 16px;
+                font-weight: 500;
+                text-transform: capitalize;
+            ">
+              {{ movie.title }}
+            </h5>
+          </div>
         </div>
         {% endfor %}
+      </div>
     </div>
-</div>
+    {% endif %}
+  </div>
+  <!-- ============ END HOMEPAGE RECOMMENDATIONS ============ -->
 
-<style>
-/* Hover effects */
-.card:hover .fig {
-    opacity: 1 !important;
-}
-
-.card:hover .card-img-top {
-    filter: brightness(70%);
-    transition: filter 0.3s ease;
-}
-
-.card .fig {
-    pointer-events: none;
-}
-
-.card .card-btn {
-    pointer-events: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .homepage-recommendations h3 {
-        font-size: 24px !important;
-    }
-    
-    .homepage-recommendations h5 {
-        font-size: 14px !important;
-    }
-}
-</style>
-
-<script>
-function searchDefault(movieTitle) {
-    $('#autoComplete').val(movieTitle);
-    $('.movie-button').click();
-}
-</script>
-{% endif %}
+  <style>
+  /* Hover effects */
+  .card:hover .fig {
+      opacity: 1 !important;
+  }
+  
+  .card:hover .card-img-top {
+      filter: brightness(70%);
+      transition: filter 0.3s ease;
+  }
+  
+  .card .fig {
+      pointer-events: none;
+  }
+  
+  .card .card-btn {
+      pointer-events: none;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+      .homepage-recommendations h3 {
+          font-size: 24px !important;
+      }
+      
+      .homepage-recommendations h5 {
+          font-size: 14px !important;
+      }
+  }
+  </style>
 
   <div id="loader" class="text-center">
   </div>
@@ -333,26 +325,42 @@ function searchDefault(movieTitle) {
 
   <!-- Load our custom JavaScript (recommender.js has all functionality including autocomplete) -->
   <script type="text/javascript" src="{{ url_for('static', filename='recommender.js') }}"></script>
+  
+  <!-- Homepage recommendations control script -->
   <script>
-    $(document).ready(function () {
-      // Handle Sign Up Form Submission
-      $('#signupModal form').on('submit', function () {
-        $('#signupModal').modal('hide');
-        $('#auth-loader').css('display', 'flex');
+  $(document).ready(function() {
+      // Store the homepage recommendations element
+      var $homepageRecs = $('#homepage-recommendations');
+      
+      // Hide when search button is clicked
+      $('.movie-button').on('click', function() {
+          $homepageRecs.hide();
       });
-
-      // Handle Sign In Form Submission
-      $('#signinModal form').on('submit', function () {
-        $('#signinModal').modal('hide');
-        $('#auth-loader').css('display', 'flex');
+      
+      // Hide when search results are loaded
+      $(document).ajaxComplete(function(event, xhr, settings) {
+          if (settings.url === '/api/tmdb/search' || 
+              settings.url.includes('/similarity') || 
+              settings.url.includes('/recommend')) {
+              $homepageRecs.hide();
+          }
       });
-    });
+      
+      // Show when returning to home page
+      $('a[href="/home"], a.navbar-brand').on('click', function() {
+          setTimeout(function() {
+              $homepageRecs.show();
+          }, 100);
+      });
+      
+      // Also show on initial page load
+      $homepageRecs.show();
+  });
 
-    // Function to handle clicking on default recommendations
-    function searchDefault(movieTitle) {
+  function searchDefault(movieTitle) {
       $('#autoComplete').val(movieTitle);
       $('.movie-button').click();
-    }
+  }
   </script>
 
 </body>
