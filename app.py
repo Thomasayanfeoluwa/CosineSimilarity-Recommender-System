@@ -94,7 +94,11 @@ def logout():
 @app.route("/home")
 def home():
     suggestions = MovieEngine.get_suggestions()
-    return render_template("home.html", suggestions=suggestions)
+    # Get default recommendations for homepage
+    default_recs = MovieEngine.get_homepage_recommendations(20)
+    return render_template("home.html", 
+                         suggestions=suggestions,
+                         default_recommendations=default_recs)
 
 @app.route("/similarity", methods=["POST"])
 def similarity():
