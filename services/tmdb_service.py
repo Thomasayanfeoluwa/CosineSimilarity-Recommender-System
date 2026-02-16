@@ -9,29 +9,33 @@ class TMDBService:
 
     _cache = {}
     _cache_ttl = 86400  # 24 hours
-
+    
     @classmethod
     def get_movie_with_ratings(cls, title):
-        """Get movie with ratings, cached for 24 hours"""
         cache_key = f"enriched_{title}"
-        if cache_key in cls._cache:
-            return cls._cache[cache_key]
         
+        # Use existing cache system
+        cached = cls._get_cached(cache_key)
+        if cached:
+            return cached
+        
+        # Fetch fresh data
         result = cls.search_movie(title)
         if result.get('results'):
             movie_id = result['results'][0]['id']
             details = cls.get_movie_details(movie_id)
-            cls._cache[cache_key] = {
+            enriched_data = {
                 'vote_average': details.get('vote_average'),
                 'popularity': details.get('popularity'),
                 'vote_count': details.get('vote_count')
             }
-            return cls._cache[cache_key]
+            # Use existing cache setter
+            cls._set_cache(cache_key, enriched_data)
+            return enriched_data
         return None
 
     @classmethod
     def _get_cached(cls, key):
-        """Get data from cache if it exists and is fresh"""
         if key in cls._cache:
             data, timestamp = cls._cache[key]
             # Check if cache is still valid (less than 24 hours old)
@@ -44,7 +48,6 @@ class TMDBService:
     
     @classmethod
     def _set_cache(cls, key, data):
-        """Store data in cache with current timestamp"""
         cls._cache[key] = (data, time.time())
         logging.info(f"Cached data for: {key}")
     
