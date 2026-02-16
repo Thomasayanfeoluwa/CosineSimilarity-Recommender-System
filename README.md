@@ -1,1 +1,191 @@
-# CosineSimilarity-Recommender-System
+# 🎬 Movie Recommendation System with Trailer and Sentiment Analysis
+
+![Project Banner / Demo GIF](path/to/demo_gif.gif)
+<!-- TODO: Upload a demo GIF or banner image of the application running -->
+
+A robust, full-stack movie recommendation engine built with **Flask**, **PostgreSQL**, and **Machine Learning**. This system leverages **Cosine Similarity** and **FAISS (Facebook AI Similarity Search)** for high-performance recommendations, alongside real-time **Sentiment Analysis** for user reviews.
+
+---
+
+## 🚀 Key Features
+
+- **Advanced Recommendation Engine**: Utilization of **TF-IDF** vectorization and **Cosine Similarity** to recommend movies based on content metadata.
+- **High-Performance Indexing**: Integrated **FAISS** with **TruncatedSVD** dimensionality reduction to handle large datasets efficiently on resource-constrained environments (e.g., Render free tier).
+- **Sentiment Analysis**: Real-time classification of user reviews (Good/Bad) using a model trained on 20,000 IMDb reviews with **Naive Bayes**, **Logistic Regression**, and **Linear SVM**.
+- **User Authentication**: Secure Signup/Login system with password hashing and session management.
+- **Interactive UI**: Dynamic interface with movie trailers, cast details, and responsive design.
+- **Data Management**:**PostgreSQL** database for storing users, reviews, search history, and recommendation logs.
+- **API Integration**: Real-time data fetching from the **TMDB API** for up-to-date movie metadata, posters, and trailers.
+
+---
+
+## 🏗️ System Architecture
+
+1.  **Data Collection**:
+    - Scraped IMDb datasets to build a comprehensive initial movie database.
+    - Integrated TMDB API for real-time metadata updates.
+
+2.  **Model Training (Sentiment Analysis)**:
+    - Analyzed and preprocessed a dataset of 20,000 reviews.
+    - Trained multiple algorithms: **Multinomial Naive Bayes**, **Logistic Regression**, and **Linear SVC**.
+    - Selected the best-performing model for production to ensure accurate sentiment classification.
+
+3.  **Recommendation Engine & Optimization**:
+    - **Vectorization**: Used TF-IDF to convert text data into numerical vectors.
+    - **Dimensionality Reduction**: Applied **TruncatedSVD** to reduce the feature space. 
+    - **Indexing**: Implemented **FAISS** index to enable fast similarity searches, solving the challenge of deploying large similarity matrices on limited cloud storage.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Python, Flask, Gunicorn
+- **Database**: PostgreSQL
+- **Machine Learning**: Scikit-Learn, NumPy, Pandas, FAISS, NLTK
+- **Frontend**: HTML5, CSS3, JavaScript (AJAX), Bootstrap
+- **APIs**: The Movie Database (TMDB) API
+- **Deployment**: Render
+
+---
+
+## 💡 Professional Handling: Challenges & Solutions
+
+### 1. Deployment Limitation Due to Large Model File Size
+**Problem:** The trained recommendation model (`.pkl`) and similarity matrix exceeded the storage limits of the free-tier Render hosting, causing build failures.
+**Professional Handling:**
+- Optimized storage by implementing **FAISS** for indexing instead of loading the full similarity matrix.
+- Applied **TruncatedSVD** to reduce dataset dimensionality, creating a lighter, production-optimized model.
+- Successfully deployed the system while maintaining recommendation accuracy.
+
+### 2. Performance Optimization Using FAISS Indexing
+**Problem:** Brute-force cosine similarity on large vectors resulted in slow query responses and high latency.
+**Professional Handling:**
+- Replaced brute-force search with **FAISS (Facebook AI Similarity Search)**.
+- Built a vector index enabling approximate nearest neighbor search.
+- Significantly reduced query latency, enabling real-time scalable recommendations.
+
+### 3. Integrating Cosine Similarity with Flask
+**Problem:** Aligning data preprocessing, model loading, and real-time query handling created sync issues and potential crashes.
+**Professional Handling:**
+- Implemented robust validation checks before querying the index.
+- Added graceful fallback messaging for missing movies.
+- Optimized data serialization to prevent memory spikes during runtime.
+
+### 4. TMDB API Integration & Synchronization
+**Problem:** Asynchronous API calls for metadata, posters, and trailers led to incomplete page loads and synchronization issues.
+**Professional Handling:**
+- Designed structured **AJAX request chains** for sequential data loading.
+- Implemented comprehensive error handling and loading indicators (spinners) to improve UX.
+- Ensured consistent UI rendering even if partial API data fails.
+
+### 5. Handling Null or Missing Metadata
+**Problem:** Critical identifiers (like IMDb IDs) returning null values caused review submission errors.
+**Professional Handling:**
+- Added hidden form validation and defensive backend logic.
+- Improved template data binding to prevent data corruption.
+- Ensured data consistency across user sessions.
+
+### 6. Internal Server Errors During Reviews
+**Problem:** Server crashes during review submission due to improper form handling.
+**Professional Handling:**
+- Implemented structured error logging.
+- Validated all form parameters server-side before database insertion.
+- Strengthened Flask route exception handling for stability.
+
+### 7. API Key Exposure Risk
+**Problem:** API keys were initially exposed in client-side JavaScript.
+**Professional Handling:**
+- Migrated sensitive API calls to backend Flask routes (`/api/tmdb/...`).
+- Removed console logging of credentials to protect intellectual property.
+
+### 8. Frontend Input Validation & UX
+**Problem:** Empty search queries and duplicate requests degraded the user experience.
+**Professional Handling:**
+- Implemented dynamic button states (disable on submit).
+- Added keyboard event interception and autocomplete suggestions.
+- Reduced invalid backend requests and improved responsiveness.
+
+### 9. Database Schema & Data Integrity
+**Problem:** Inconsistent review data due to poor field mapping.
+**Professional Handling:**
+- Designed a structured **PostgreSQL** schema.
+- Implemented timestamp logging and strict data validation.
+- Enabled accurate analytics and scalable review storage.
+
+### 10. Performance Bottlenecks from API Calls
+**Problem:** Sequential external API calls increased page load times.
+**Professional Handling:**
+- Optimized request flow with efficient data batching.
+- Reduced redundant calls and implemented caching strategies where possible.
+- Improved user retention through faster load times.
+
+### 11. Security & Session Management
+**Problem:** Need for secure authentication and session handling.
+**Professional Handling:**
+- Implemented Flask session authentication securely.
+- Protected sensitive routes (e.g., adding reviews) with login checks.
+- Enhanced platform trustworthiness and user data protection.
+
+---
+
+## 📸 Screenshots
+
+### Home Page
+![Home Page](path/to/home_page_screenshot.png)
+<!-- Upload a screenshot of the landing page -->
+
+### Movie Details & Trailer
+![Movie Details](path/to/details_screenshot.png)
+<!-- Upload a screenshot showing movie details and the trailer modal -->
+
+### Recommendations & Reviews
+![Recommendations](path/to/recommendations_screenshot.png)
+<!-- Upload a screenshot showing the recommendations grid and review section -->
+
+---
+
+## ⚙️ Installation & Setup
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System
+    cd CosineSimilarity-Recommender-System
+    ```
+
+2.  **Create a Virtual Environment**
+    ```bash
+    conda create -n rec_sys python=3.11
+    conda activate rec_sys
+    ```
+
+3.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Set Up Environment Variables**
+    Create a `.env` file in the root directory:
+    ```env
+    TMDB_API_KEY=your_tmdb_api_key
+    DATABASE_URL=postgresql://user:password@localhost/dbname
+    FLASK_SECRET_KEY=your_secret_key
+    ```
+
+5.  **Initialize the Database**
+    ```bash
+    flask db init
+    flask db migrate
+    flask db upgrade
+    ```
+
+6.  **Run the Application**
+    ```bash
+    flask run
+    ```
+    Access the app at `https://movies-recommender-system-kxlg.onrender.com/home`.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.

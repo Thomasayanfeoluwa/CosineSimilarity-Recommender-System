@@ -27,6 +27,11 @@ if not database_url:
     raise ValueError("DATABASE_URL not found")
 database_url = database_url.replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 5,
+    'pool_recycle': 60,
+    'pool_pre_ping': True,
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -261,6 +266,12 @@ def tmdb_movie_credits(movie_id):
 @app.route("/api/tmdb/person/<int:person_id>", methods=["GET"])
 def tmdb_person_details(person_id):
     return TMDBService.get_person_details(person_id)
+
+@app.route('/health')
+def health():
+    # This keeps the database connection alive
+    db.session.execute('SELECT 1')
+    return {'status': 'ok'}, 200
 
 if __name__ == '__main__':
     with app.app_context():
