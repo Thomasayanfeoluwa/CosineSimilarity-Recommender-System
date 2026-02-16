@@ -8,8 +8,26 @@ class TMDBService:
     BASE_URL = "https://api.themoviedb.org/3"
 
     _cache = {}
-    _cache_ttl = 86400  # 24 hours in seconds (24 * 60 * 60)
+    _cache_ttl = 86400  # 24 hours
 
+    @classmethod
+    def get_movie_with_ratings(cls, title):
+        """Get movie with ratings, cached for 24 hours"""
+        cache_key = f"enriched_{title}"
+        if cache_key in cls._cache:
+            return cls._cache[cache_key]
+        
+        result = cls.search_movie(title)
+        if result.get('results'):
+            movie_id = result['results'][0]['id']
+            details = cls.get_movie_details(movie_id)
+            cls._cache[cache_key] = {
+                'vote_average': details.get('vote_average'),
+                'popularity': details.get('popularity'),
+                'vote_count': details.get('vote_count')
+            }
+            return cls._cache[cache_key]
+        return None
 
     @classmethod
     def _get_cached(cls, key):
