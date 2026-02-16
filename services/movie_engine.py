@@ -19,7 +19,6 @@ class MovieEngine:
 
     @classmethod
     def _get_project_root(cls):
-        """Helper method to get project root"""
         current_dir = os.path.dirname(os.path.abspath(__file__))
         return os.path.dirname(current_dir)
 
@@ -88,7 +87,6 @@ class MovieEngine:
 
     @classmethod
     def _extract_features_from_tmdb(cls, movie_id):
-        """Extract features from TMDB in the exact same format as your combined_columns"""
         from services.tmdb_service import TMDBService
         
         # Get movie details and credits
@@ -159,6 +157,29 @@ class MovieEngine:
                 recommendations.extend(top_in_genre['movie_title'].tolist())
         
         return recommendations[:count]
+
+    @classmethod
+    def get_homepage_posters(cls, movie_titles):
+        from services.tmdb_service import TMDBService
+        
+        posters = []
+        for title in movie_titles:
+            try:
+                # Search for the movie on TMDB
+                result = TMDBService.search_movie(title)
+                if result.get('results') and len(result['results']) > 0:
+                    poster_path = result['results'][0].get('poster_path')
+                    if poster_path:
+                        posters.append(f"https://image.tmdb.org/t/p/w500{poster_path}")
+                    else:
+                        posters.append("https://via.placeholder.com/500x750?text=No+Poster")
+                else:
+                    posters.append("https://via.placeholder.com/500x750?text=No+Poster")
+            except Exception as e:
+                logging.error(f"Error fetching poster for {title}: {e}")
+                posters.append("https://via.placeholder.com/500x750?text=No+Poster")
+        
+        return posters
 
     @classmethod
     def recommend_movies(cls, movie_title):
