@@ -94,11 +94,20 @@ def logout():
 @app.route("/home")
 def home():
     suggestions = MovieEngine.get_suggestions()
-    # Get default recommendations for homepage
-    default_recs = MovieEngine.get_homepage_recommendations(20)
+    # Get homepage recommendations
+    movie_titles = MovieEngine.get_homepage_recommendations(20)
+    # Get posters for these movies
+    movie_posters = MovieEngine.get_homepage_posters(movie_titles)
+    # Combine into list of dictionaries for easier template handling
+    homepage_movies = []
+    for i in range(len(movie_titles)):
+        homepage_movies.append({
+            'title': movie_titles[i],
+            'poster': movie_posters[i] if i < len(movie_posters) else "https://via.placeholder.com/500x750?text=No+Poster"
+        })
     return render_template("home.html", 
                          suggestions=suggestions,
-                         default_recommendations=default_recs)
+                         homepage_movies=homepage_movies)
 
 @app.route("/similarity", methods=["POST"])
 def similarity():
