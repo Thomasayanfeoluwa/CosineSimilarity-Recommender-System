@@ -1,5 +1,7 @@
 # 🎬 Movie Recommendation System with Trailer and Sentiment Analysis
 
+The primary goal of this project is to design and deploy an intelligent movie recommendation system that enhances user content discovery, improves engagement, and delivers personalized entertainment experiences while maintaining cost-efficient and scalable infrastructure. The project aims to solve the challenge of overwhelming content libraries by leveraging machine learning techniques to recommend relevant movies based on user interests, movie metadata, and similarity analysis. Additionally, the system integrates user interaction features such as reviews and search behavior to support data-driven personalization and continuous improvement of recommendation accuracy. From a business perspective, the solution was built to improve user retention, increase platform engagement time, optimize infrastructure resources through model compression and FAISS indexing, and provide actionable user preference insights that can support strategic decision-making, content acquisition planning, and competitive advantage in digital entertainment platforms.
+
 https://github.com/user-attachments/assets/64f280a4-f5ae-40dd-a605-2b997cfaf889
 
 
@@ -7,6 +9,7 @@ https://github.com/user-attachments/assets/64f280a4-f5ae-40dd-a605-2b997cfaf889
   <img width="150" height="150" alt="TrailerMatch - Watch Trailers + Smart Recommendations" src="https://github.com/user-attachments/assets/a8606912-3408-4cbe-9f34-9b872f0d8319" />
 </p>
 
+## 🎬 Demo
 <p align="center">
   <a href="https://movies-recommender-system-kxlg.onrender.com/home">
     <img src="https://img.shields.io/badge/LIVE-DEMO-red?style=for-the-badge&logo=render">
@@ -15,9 +18,6 @@ https://github.com/user-attachments/assets/64f280a4-f5ae-40dd-a605-2b997cfaf889
   <img src="https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask">
 </p>
 
-## 🎬 Demo
-
-![TrailerMatch Demo](demo.gif)
 
 *Search any movie, watch trailers, get AI-powered recommendations and sentiment analysis from real reviews!*
 
