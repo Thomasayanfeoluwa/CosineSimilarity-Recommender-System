@@ -34,20 +34,17 @@ $(function () {
     $('.movie-button').attr('disabled', e.target.value == "");
   });
 
-  // Initialize autocomplete once
+  // Initialize autocomplete once - MODIFIED to remove "No results found"
   const autoCompleteJS = new autoComplete({
     selector: "#autoComplete",
     placeHolder: "Enter the Movie Name",
     data: { src: films, cache: true },
     resultsList: {
       element: (list, data) => {
-        if (!data.results.length) {
-          const message = document.createElement("div");
-          message.innerHTML = `<span>No results found</span>`;
-          list.appendChild(message);
-        }
+        // REMOVED the "No results found" message
+        // Now it shows nothing when no matches
       },
-      noResults: true,
+      noResults: false,  // Changed from true to false
       maxResults: 5
     },
     resultItem: { highlight: true },
@@ -91,8 +88,8 @@ function load_details(title) {
       console.log("TMDB API Response received");
       if (movie.results.length < 1) {
         console.log("No movies found for title: " + title);
-        $('.fail').css('display', 'block');
-        $('.results').css('display', 'none');
+        // Don't show fail message for API results
+        // Just hide loader and do nothing
         hideLoader(); // ← HIDE LOADER
       }
       else {
@@ -123,8 +120,8 @@ function movie_recs(movie_title, movie_id) {
       console.log("Backend response received: " + recs.substring(0, 50) + "...");
       if (recs == "Sorry! The movie you requested is not in our database. Please check the spelling or try with some other movies") {
         console.log("Backend reported movie not in database");
-        $('.fail').css('display', 'block');
-        $('.results').css('display', 'none');
+        // REMOVED: Don't show fail message
+        // Just hide loader and do nothing
         hideLoader(); // ← HIDE LOADER
       }
       else {
