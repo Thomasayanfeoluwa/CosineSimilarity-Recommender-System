@@ -34,17 +34,14 @@ $(function () {
     $('.movie-button').attr('disabled', e.target.value == "");
   });
 
-  // Initialize autocomplete once - MODIFIED to remove "No results found"
   const autoCompleteJS = new autoComplete({
     selector: "#autoComplete",
     placeHolder: "Enter the Movie Name",
     data: { src: films, cache: true },
     resultsList: {
       element: (list, data) => {
-        // REMOVED the "No results found" message
-        // Now it shows nothing when no matches
       },
-      noResults: false,  // Changed from true to false
+      noResults: false,  
       maxResults: 5
     },
     resultItem: { highlight: true },
@@ -53,7 +50,6 @@ $(function () {
     }
   });
 
-  // Movie search click handler - NO API KEY NEEDED!
   $('.movie-button').on('click', function () {
     console.log("Search button clicked");
 
