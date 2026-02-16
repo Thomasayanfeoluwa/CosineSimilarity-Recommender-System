@@ -60,7 +60,8 @@ class TMDBService:
         try:
             response = requests.get(
                 f"{cls.BASE_URL}/search/movie",
-                params={'api_key': cls.API_KEY, 'query': query}
+                params={'api_key': cls.API_KEY, 'query': query},
+                timeout=3
             )
             result = response.json()
             cls._set_cache(cache_key, result)
