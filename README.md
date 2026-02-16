@@ -3,6 +3,24 @@
 ![Project Banner / Demo GIF](path/to/demo_gif.gif)
 <!-- TODO: Upload a demo GIF or banner image of the application running -->
 
+<p align="center">
+  <img src="banner.png" alt="TrailerMatch - Watch Trailers + Smart Recommendations">
+</p>
+
+<p align="center">
+  <a href="https://movies-recommender-system-kxlg.onrender.com/home">
+    <img src="https://img.shields.io/badge/LIVE-DEMO-red?style=for-the-badge&logo=render">
+  </a>
+  <img src="https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python">
+  <img src="https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask">
+</p>
+
+## 🎬 Demo
+
+![TrailerMatch Demo](demo.gif)
+
+*Search any movie, watch trailers, get AI-powered recommendations and sentiment analysis from real reviews!*
+
 A robust, full-stack movie recommendation engine built with **Flask**, **PostgreSQL**, and **Machine Learning**. This system leverages **Cosine Similarity** and **FAISS (Facebook AI Similarity Search)** for high-performance recommendations, alongside real-time **Sentiment Analysis** for user reviews.
 
 ---

@@ -277,5 +277,5 @@ if __name__ == '__main__':
     with app.app_context():
         MovieEngine.get_clf_vectorizer()
         MovieEngine.get_df_engine()
-    port = int(os.environ.get("PORT", 5000))  
-    app.run(host="0.0.0.0", port=port, debug=True)
+    port = int(os.environ.get("PORT", 10000))  
+    app.run(host="0.0.0.0", port=port, debug=False)
