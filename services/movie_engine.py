@@ -8,6 +8,7 @@ import logging
 from bs4 import BeautifulSoup
 from services.tmdb_service import TMDBService
 
+
 logging.basicConfig(level=logging.INFO)
 
 class MovieEngine:
@@ -160,8 +161,6 @@ class MovieEngine:
 
     @classmethod
     def get_homepage_posters(cls, movie_titles):
-        from services.tmdb_service import TMDBService
-        
         posters = []
         for title in movie_titles:
             try:
