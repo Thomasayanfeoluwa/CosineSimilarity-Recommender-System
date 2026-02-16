@@ -172,6 +172,7 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 <img width="1366" height="768" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/5f4bbadc-5d08-4af4-9b54-cd22d9f9793d" />
 
 ### 👤 User Accounts
+<img width="1366" height="768" alt="Screenshot (268)" src="https://github.com/user-attachments/assets/096e4c58-bddf-4f4c-80cc-3a21a85a1a82" />
 
 ### 🔍 Search History
 <img width="1366" height="768" alt="Screenshot (267)" src="https://github.com/user-attachments/assets/9811ff8a-c9a2-4896-808a-2dae8774508b" />
