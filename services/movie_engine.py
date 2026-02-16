@@ -130,10 +130,11 @@ class MovieEngine:
         df, _, _ = cls.get_df_engine()
         
         # Get movies with live TMDB data
-        all_movies = df['movie_title'].tolist()
+        candidate_count = count * 2
+        all_movies = df['movie_title'].head(candidate_count).tolist()
         enriched_movies = []
         
-        for title in all_movies[:100]:  # Limit to first 100 for performance
+        for title in all_movies[:20]:  # Limit to first 20 for performance
             enriched = EnrichedMovie(title)
             if enriched.vote_average or enriched.popularity:
                 enriched_movies.append(enriched)
