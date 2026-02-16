@@ -205,7 +205,7 @@ class MovieEngine:
             faiss.normalize_L2(query_vector)
             distance, indices = faiss_index.search(query_vector, k=12)
             neighbor_indices = [idx for idx in indices[0] if idx != i]
-            recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
+            recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:12]
             return recommendations
             # CASE 2: New movie 
         else:
@@ -227,7 +227,7 @@ class MovieEngine:
             # Get 10 recommendations 
             distance, indices = faiss_index.search(query_vector, k=12)
             # Return top 10 recommendations
-            recommendations = [df["movie_title"].iloc[idx] for idx in indices[0]][:10]
+            recommendations = [df["movie_title"].iloc[idx] for idx in indices[0]][:12]
             return recommendations
 
     
