@@ -1,10 +1,10 @@
 # 🎬 Movie Recommendation System with Trailer and Sentiment Analysis
 
-![Project Banner / Demo GIF](path/to/demo_gif.gif)
-<!-- TODO: Upload a demo GIF or banner image of the application running -->
+https://github.com/user-attachments/assets/64f280a4-f5ae-40dd-a605-2b997cfaf889
+
 
 <p align="center">
-  <img src="banner.png" alt="TrailerMatch - Watch Trailers + Smart Recommendations">
+  <img width="150" height="150" alt="TrailerMatch - Watch Trailers + Smart Recommendations" src="https://github.com/user-attachments/assets/a8606912-3408-4cbe-9f34-9b872f0d8319" />
 </p>
 
 <p align="center">
@@ -147,23 +147,34 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 
 ---
 
+### Home Page
 ## 📸 Screenshots
 
-### Home Page
-![Home Page](path/to/home_page_screenshot.png)
-<!-- Upload a screenshot of the landing page -->
+<img width="1366" height="768" alt="Screenshot (261)" src="https://github.com/user-attachments/assets/94d02454-e71e-4ee8-b729-3303e3d51ec4" />
 
 ### Movie Details & Trailer
-![Movie Details](path/to/details_screenshot.png)
-<!-- Upload a screenshot showing movie details and the trailer modal -->
+<img width="1366" height="732" alt="Screenshot (262)" src="https://github.com/user-attachments/assets/86f1ab95-c2cd-4d6c-b7a3-366b5e8359c3" />
 
 ### Reviews
-![Reviews](path/to/reviews_screenshot.png)
-<!-- Upload a screenshot showing the recommendations grid and review section -->
+<img width="1366" height="733" alt="Screenshot (264)" src="https://github.com/user-attachments/assets/38098191-aeb5-4b1d-af22-b066eadb2603" />
 
 ### Recommendations
-![Recommendations](path/to/recommendations_screenshot.png)
-<!-- Upload a screenshot showing the recommendations grid and review section -->
+<img width="1366" height="733" alt="Screenshot (263)" src="https://github.com/user-attachments/assets/95c5b9c8-ca45-4d0d-826d-fb1ef053a832" />
+
+
+### 🗄️ Database Schema 
+## 📸 Screenshots
+
+### 🎬 Movie Recommendations History
+<img width="1366" height="768" alt="Screenshot (265)" src="https://github.com/user-attachments/assets/67ea7d51-364a-495b-91fa-282261b0fc7c" />
+
+### ⭐ User Reviews with Sentiment Analysis
+<img width="1366" height="768" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/5f4bbadc-5d08-4af4-9b54-cd22d9f9793d" />
+
+### 👤 User Accounts
+
+### 🔍 Search History
+<img width="1366" height="768" alt="Screenshot (267)" src="https://github.com/user-attachments/assets/9811ff8a-c9a2-4896-808a-2dae8774508b" />
 
 ---
 
@@ -205,7 +216,11 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
     ```bash
     flask run
     ```
-    Access the app at `https://movies-recommender-system-kxlg.onrender.com/home`.
+    Access the app at   <p align="center">
+  <a href="https://movies-recommender-system-kxlg.onrender.com/home">
+    <img src="https://img.shields.io/badge/LIVE-DEMO-red?style=for-the-badge&logo=render">
+  </a>
+</p>
 
 ---
 
