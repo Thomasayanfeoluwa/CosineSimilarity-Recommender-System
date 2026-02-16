@@ -127,36 +127,63 @@ class MovieEngine:
 
     @classmethod
     def get_homepage_recommendations(cls, count=20):
-        df, _, _ = cls.get_df_engine()
-        
-        recommendations = []
-        
-        # 1. Top 10 popular movies (50%)
-        if 'vote_average' in df.columns:
-            popular = df.nlargest(count//2, 'vote_average')['movie_title'].tolist()
-            recommendations.extend(popular)
-        
-        # 2. Genre-diverse movies (50%)
-        all_genres = set()
-        for genres in df['genres'].dropna():
-            all_genres.update(genres.split('|'))
-
-        all_genres = list(all_genres)
-        remaining = count - len(recommendations)
-        movies_per_genre = max(1, remaining // len(all_genres))
-        
-        for genre in all_genres:
-            genre_movies = df[df['genres'].str.contains(genre, na=False)]
-            # Exclude already selected movies
-            genre_movies = genre_movies[~genre_movies['movie_title'].isin(recommendations)]
-            if not genre_movies.empty:
-                if 'vote_average' in df.columns:
-                    top_in_genre = genre_movies.nlargest(movies_per_genre, 'vote_average')
-                else:
-                    top_in_genre = genre_movies.head(movies_per_genre)
-                recommendations.extend(top_in_genre['movie_title'].tolist())
-        
-        return recommendations[:count]
+        try:
+            df, _, _ = cls.get_df_engine()
+            
+            recommendations = []
+            
+            # 1. Top popular movies (50%)
+            if 'vote_average' in df.columns:
+                popular = df.nlargest(min(count//2, len(df)), 'vote_average')['movie_title'].tolist()
+                recommendations.extend(popular)
+            
+            # 2. Genre-diverse movies (50%)
+            if 'genres' in df.columns:
+                # Get all unique genres safely
+                all_genres = set()
+                for genres_str in df['genres'].dropna().astype(str):
+                    if genres_str and genres_str != 'nan':
+                        all_genres.update(genres_str.split('|'))
+                
+                all_genres = list(all_genres)
+                if all_genres:  # Only if we have genres
+                    remaining = count - len(recommendations)
+                    movies_per_genre = max(1, remaining // len(all_genres))
+                    
+                    for genre in all_genres[:10]: 
+                        try:
+                            # Safely filter movies by genre
+                            genre_movies = df[df['genres'].astype(str).str.contains(genre, na=False, regex=False)]
+                            # Exclude already selected movies
+                            genre_movies = genre_movies[~genre_movies['movie_title'].isin(recommendations)]
+                            if not genre_movies.empty:
+                                if 'vote_average' in df.columns:
+                                    top_in_genre = genre_movies.nlargest(min(movies_per_genre, len(genre_movies)), 'vote_average')
+                                else:
+                                    top_in_genre = genre_movies.head(min(movies_per_genre, len(genre_movies)))
+                                recommendations.extend(top_in_genre['movie_title'].tolist())
+                        except Exception as e:
+                            logging.error(f"Error processing genre {genre}: {e}")
+                            continue
+            
+            # Remove duplicates and limit
+            seen = set()
+            unique_recommendations = []
+            for movie in recommendations:
+                if movie not in seen:
+                    seen.add(movie)
+                    unique_recommendations.append(movie)
+            
+            return unique_recommendations[:count]
+            
+        except Exception as e:
+            logging.error(f"Error in get_homepage_recommendations: {e}")
+            # Return fallback recommendations
+            try:
+                df, _, _ = cls.get_df_engine()
+                return df['movie_title'].head(count).tolist()
+            except:
+                return ["The Dark Knight", "Inception", "Interstellar", "Avatar"][:count]
 
     @classmethod
     def get_homepage_posters(cls, movie_titles):
