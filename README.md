@@ -157,7 +157,11 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 ![Movie Details](path/to/details_screenshot.png)
 <!-- Upload a screenshot showing movie details and the trailer modal -->
 
-### Recommendations & Reviews
+### Reviews
+![Reviews](path/to/reviews_screenshot.png)
+<!-- Upload a screenshot showing the recommendations grid and review section -->
+
+### Recommendations
 ![Recommendations](path/to/recommendations_screenshot.png)
 <!-- Upload a screenshot showing the recommendations grid and review section -->
 
