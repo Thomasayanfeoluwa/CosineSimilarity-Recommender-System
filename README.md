@@ -116,6 +116,7 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 **Problem:** Sequential external API calls increased page load times.
 **Professional Handling:**
 - Optimized request flow with efficient data batching.
+- Implemented a robust in-memory caching layer within the TMDBService class. This system stores API responses for 24 hours, significantly reducing redundant network requests.
 - Reduced redundant calls and implemented caching strategies where possible.
 - Improved user retention through faster load times.
 
