@@ -28,7 +28,7 @@
     href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
   <script type="text/javascript">
-    var films = {{ suggestions| tojson}};
+    var films = {{ suggestions| tojson }};
   </script>
 
 </head>
@@ -91,7 +91,6 @@
       style="width: auto; height: auto; max-width: 200px;">
   </div>
 
-
   <div class="ml-container" style="display: block;">
     <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System" target="_blank"
       class="github-corner" title="View source on GitHub">
@@ -121,6 +120,26 @@
 
   </div>
 
+  <!-- ============ DEFAULT RECOMMENDATIONS SECTION ============ -->
+  {% if default_recommendations %}
+  <div class="default-recommendations" style="margin-top: 40px;">
+    <center>
+      <h3 style="color: white; margin-bottom: 10px;">POPULAR MOVIES</h3>
+      <h5 style="color: #ccc; margin-bottom: 30px;">Discover top-rated movies</h5>
+    </center>
+    <div class="movie-content">
+      {% for movie in default_recommendations %}
+      <div class="card" style="width: 15rem; cursor: pointer;" title="{{ movie }}" onclick="searchDefault('{{ movie }}')">
+        <div class="card-body" style="background-color: #2a2a2a; border-radius: 10px;">
+          <h5 class="card-title" style="color: white; text-align: center; margin: 10px 0;">{{ movie }}</h5>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <!-- ============ END DEFAULT RECOMMENDATIONS ============ -->
+
   <div id="loader" class="text-center">
   </div>
 
@@ -136,7 +155,6 @@
       <h2 id="name" class="text-uppercase"></h2>
     </center>
   </div>
-
 
   <div class="footer" style="">Made with<span style="font-size:150%;color:red;"> &hearts; </span>by Thomas</div>
 
@@ -202,7 +220,6 @@
     </div>
   </div>
 
-
   <!-- Load jQuery first -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -211,11 +228,8 @@
   <!-- Load autocomplete library -->
   <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
 
-  <!-- <script>
-    var TMDB_API_KEY = "{{ TMDB_API_KEY }}";
-  </script> -->
   <!-- Load our custom JavaScript (recommender.js has all functionality including autocomplete) -->
-  <script type="text/javascript" src="{{url_for('static', filename='recommender.js')}}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='recommender.js') }}"></script>
   <script>
     $(document).ready(function () {
       // Handle Sign Up Form Submission
@@ -230,6 +244,12 @@
         $('#auth-loader').css('display', 'flex');
       });
     });
+
+    // Function to handle clicking on default recommendations
+    function searchDefault(movieTitle) {
+      $('#autoComplete').val(movieTitle);
+      $('.movie-button').click();
+    }
   </script>
 
 </body>
