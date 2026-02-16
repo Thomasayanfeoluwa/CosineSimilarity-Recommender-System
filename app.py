@@ -273,9 +273,59 @@ def health():
     db.session.execute('SELECT 1')
     return 'ok', 200
 
+# if __name__ == '__main__':
+#     with app.app_context():
+#         MovieEngine.get_clf_vectorizer()
+#         MovieEngine.get_df_engine()
+#     port = int(os.environ.get("PORT", 10000))  
+#     app.run(host="0.0.0.0", port=port, debug=False)
+
+
 if __name__ == '__main__':
-    with app.app_context():
-        MovieEngine.get_clf_vectorizer()
-        MovieEngine.get_df_engine()
-    port = int(os.environ.get("PORT", 10000))  
-    app.run(host="0.0.0.0", port=port, debug=False)
+    import sys
+    import traceback
+    import logging
+    
+    # Configure logging to ensure we see everything
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        force=True
+    )
+    
+    logger = logging.getLogger(__name__)
+    
+    logger.info("="*60)
+    logger.info("🚀 APP STARTING - DEBUG MODE")
+    logger.info("="*60)
+    
+    # Try loading models with detailed error reporting
+    try:
+        with app.app_context():
+            logger.info("📦 Loading ML models...")
+            clf, vec = MovieEngine.get_clf_vectorizer()
+            logger.info(f"✅ ML models loaded: {type(clf).__name__}, {type(vec).__name__}")
+            
+            logger.info("📦 Loading FAISS engine...")
+            df, svd, faiss_idx = MovieEngine.get_df_engine()
+            logger.info(f"✅ FAISS loaded: {faiss_idx.ntotal if faiss_idx else 0} vectors")
+            
+    except Exception as e:
+        logger.error("❌ CRITICAL ERROR DURING STARTUP:")
+        logger.error(traceback.format_exc())
+        logger.error("="*60)
+        logger.error("💡 This is why your app is crashing!")
+        logger.error("="*60)
+        # Don't exit - let's see what happens
+        pass
+    
+    # Get port from environment
+    port = int(os.environ.get("PORT", 10000))
+    logger.info(f"🚀 Attempting to start server on port {port}")
+    
+    # Try to start with extreme debugging
+    try:
+        app.run(host="0.0.0.0", port=port, debug=True)
+    except Exception as e:
+        logger.error("❌ SERVER FAILED TO START:")
+        logger.error(traceback.format_exc())
