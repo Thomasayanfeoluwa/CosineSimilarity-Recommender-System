@@ -127,56 +127,45 @@ class MovieEngine:
 
     @classmethod
     def get_homepage_recommendations(cls, count=20):
-        """Return most popular movies from different genres"""
         df, _, _ = cls.get_df_engine()
         
-        # Clean data first
-        df_clean = df.dropna(subset=['genres', 'vote_average']).copy()
+        # Get movies with live TMDB data
+        all_movies = df['movie_title'].tolist()
+        enriched_movies = []
         
-        # Get all unique genres
-        all_genres = set()
-        for genres in df_clean['genres']:
-            all_genres.update(str(genres).split('|'))
-        all_genres = sorted(list(all_genres))  # Sort for consistency
+        for title in all_movies[:100]:  # Limit to first 100 for performance
+            enriched = EnrichedMovie(title)
+            if enriched.vote_average or enriched.popularity:
+                enriched_movies.append(enriched)
         
-        recommendations = []
-        seen_movies = set()
+        # Sort for best-rated
+        best_rated = sorted(
+            enriched_movies, 
+            key=lambda m: m.vote_average or 0, 
+            reverse=True
+        )[:count//2]  # Top 10 best-rated
         
-        # Calculate how many movies per genre
-        movies_per_genre = max(1, count // len(all_genres))
+        # Sort for most popular
+        most_popular = sorted(
+            enriched_movies, 
+            key=lambda m: m.popularity or 0, 
+            reverse=True
+        )[:count//2]  # Top 10 most popular
         
-        # For each genre, get the most popular movies
-        for genre in all_genres:
-            # Filter movies containing this genre
-            genre_mask = df_clean['genres'].str.contains(genre, na=False, regex=False)
-            genre_movies = df_clean[genre_mask].copy()
-            
-            if genre_movies.empty:
-                continue
-                
-            # Sort by vote_average (popularity) and get top movies
-            genre_movies_sorted = genre_movies.sort_values('vote_average', ascending=False)
-            
-            # Get top movies for this genre, excluding already seen
-            genre_top = []
-            for _, movie in genre_movies_sorted.iterrows():
-                if movie['movie_title'] not in seen_movies and len(genre_top) < movies_per_genre:
-                    genre_top.append(movie['movie_title'])
-                    seen_movies.add(movie['movie_title'])
-            
-            recommendations.extend(genre_top)
+        # Combine and remove duplicates
+        combined = list({m.title: m for m in best_rated + most_popular}.values())
         
-        # If we need more movies to reach count, add popular movies not yet included
-        if len(recommendations) < count:
-            # Get all movies sorted by popularity
-            all_popular = df_clean.sort_values('vote_average', ascending=False)
-            
-            for _, movie in all_popular.iterrows():
-                if movie['movie_title'] not in seen_movies and len(recommendations) < count:
-                    recommendations.append(movie['movie_title'])
-                    seen_movies.add(movie['movie_title'])
+        # Fill with the best of the remaining
+        if len(combined) < count:
+            remaining = [m for m in enriched_movies if m not in combined]
+            remaining_sorted = sorted(
+                remaining,
+                key=lambda m: (m.vote_average or 0) * 0.6 + (m.popularity or 0) * 0.4,
+                reverse=True
+            )
+            combined.extend(remaining_sorted[:count - len(combined)])
         
-        return recommendations[:count]
+        return [m.title for m in combined[:count]]
 
     @classmethod
     def get_homepage_posters(cls, movie_titles):
