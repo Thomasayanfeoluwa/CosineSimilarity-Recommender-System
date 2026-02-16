@@ -75,6 +75,8 @@ function recommendcard(e) {
 
 // get the basic details of the movie from the API (via backend proxy)
 function load_details(title) {
+  $('#homepage-recommendations').hide();
+    
   console.log("Calling TMDB API for movie details: " + title);
   $.ajax({
     type: 'GET',
