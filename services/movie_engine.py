@@ -36,9 +36,9 @@ class MovieEngine:
                     cls.clf = pickle.load(f)
                 with open(vectorizer_path, "rb") as f:
                     cls.vectorizer = pickle.load(f)
-                logging.info(f"✅ Models Loaded Successfully from {project_root}/models/")
+                logging.info(f"Models Loaded Successfully from {project_root}/models/")
             except FileNotFoundError as e:
-                logging.error(f"❌ Models Loading Failed: {e}")
+                logging.error(f"Models Loading Failed: {e}")
                 raise e
         return cls.clf, cls.vectorizer
 
@@ -65,9 +65,9 @@ class MovieEngine:
                 if cls.faiss_index is None:
                     cls.faiss_index = faiss.read_index(faiss_path)  
 
-                logging.info(f"✅ FAISS Models Loaded Successfully from {project_root}/models/")
+                logging.info(f"FAISS Models Loaded Successfully from {project_root}/models/")
             except FileNotFoundError as e:
-                logging.error(f"❌ FAISS Models Loading Failed: {e}")
+                logging.error(f"FAISS Models Loading Failed: {e}")
                 raise e
         return cls.df, cls.svd, cls.faiss_index
 
@@ -80,9 +80,9 @@ class MovieEngine:
                 
                 with open(vectorizer_path, "rb") as f:
                     cls.vectorizer = pickle.load(f)
-                logging.info(f"✅ Vectorizer Loaded Successfully!")
+                logging.info(f"Vectorizer Loaded Successfully!")
             except FileNotFoundError as e:
-                logging.error(f"❌ Vectorizer Loading Failed: {e}")
+                logging.error(f"Vectorizer Loading Failed: {e}")
                 raise e
         return cls.vectorizer
 
@@ -115,8 +115,6 @@ class MovieEngine:
         
         # Extract genres
         genres = [g['name'] for g in details.get('genres', [])]
-        
-        # Format exactly as combined_columns: "director, actor1, actor2, actor3, genre1 genre2 ..."
         feature_parts = [
             director,
             actors[0],
@@ -198,12 +196,8 @@ class MovieEngine:
             neighbor_indices = [idx for idx in indices[0] if idx != i]
             recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
             return recommendations
-            # CASE 2: New movie - Get recommendations using same logic
+            # CASE 2: New movie 
         else:
-            # Get movie from TMDB 
-            # Using the same data search already fetched
-            from services.tmdb_service import TMDBService
-            
             # Search for the movie
             search_result = TMDBService.search_movie(movie_title)
             if not search_result.get('results'):
@@ -214,7 +208,7 @@ class MovieEngine:
             # Extract features
             movie_text = cls._extract_features_from_tmdb(movie_id)
             
-            # Use your EXISTING vectorizer, SVD, and FAISS 
+            # Using vectorizer, SVD, and FAISS 
             tfidf_vec = vectorizer.transform([movie_text])
             query_vector = svd.transform(tfidf_vec).astype("float32")
             faiss.normalize_L2(query_vector)
