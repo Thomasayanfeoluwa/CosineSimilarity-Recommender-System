@@ -283,12 +283,12 @@ def tmdb_person_details(person_id):
 @app.route('/health')
 def health():
     # This keeps the database connection alive
-     try:
+    try: 
         db.session.execute('SELECT 1')
-        return {'status' : 'ok'}, 200
-    except Exception as e:
+        return {'status': 'ok'}, 200
+    except Exception as e: 
         app.logger.error(f"Health check error: {e}")
-        return {'status' :'ok'}, 200
+        return {'status': 'ok'}, 200
 
 if __name__ == '__main__':
     with app.app_context():
