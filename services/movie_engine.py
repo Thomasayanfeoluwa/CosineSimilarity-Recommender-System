@@ -140,11 +140,12 @@ class MovieEngine:
         all_genres = set()
         for genres in df['genres'].dropna():
             all_genres.update(genres.split('|'))
-        
+
+        all_genres = list(all_genres)
         remaining = count - len(recommendations)
         movies_per_genre = max(1, remaining // len(all_genres))
         
-        for genre in list(all_genres)[:5]:
+        for genre in all_genres:
             genre_movies = df[df['genres'].str.contains(genre, na=False)]
             # Exclude already selected movies
             genre_movies = genre_movies[~genre_movies['movie_title'].isin(recommendations)]
