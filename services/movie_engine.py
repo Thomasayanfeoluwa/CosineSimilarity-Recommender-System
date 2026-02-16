@@ -6,6 +6,7 @@ import requests
 import os
 import logging
 from bs4 import BeautifulSoup
+from services.tmdb_service import TMDBService
 
 logging.basicConfig(level=logging.INFO)
 
@@ -86,24 +87,91 @@ class MovieEngine:
         return cls.vectorizer
 
     @classmethod
+    def _extract_features_from_tmdb(cls, movie_id):
+        """Extract features from TMDB in the exact same format as your combined_columns"""
+        from services.tmdb_service import TMDBService
+        
+        # Get movie details and credits
+        details = TMDBService.get_movie_details(movie_id)
+        credits = TMDBService.get_movie_credits(movie_id)
+        
+        # Extract director
+        director = ""
+        for crew in credits.get('crew', []):
+            if crew['job'] == 'Director':
+                director = crew['name']
+                break
+        
+        # Extract top 3 actors
+        actors = []
+        for i, cast in enumerate(credits.get('cast', [])):
+            if i < 3:  
+                actors.append(cast['name'])
+            else:
+                break
+        
+        # Pad with empty strings if less than 3 actors
+        while len(actors) < 3:
+            actors.append("")
+        
+        # Extract genres
+        genres = [g['name'] for g in details.get('genres', [])]
+        
+        # Format exactly as combined_columns: "director, actor1, actor2, actor3, genre1 genre2 ..."
+        feature_parts = [
+            director,
+            actors[0],
+            actors[1],
+            actors[2],
+            " ".join(genres)
+        ]
+        
+        return " ".join(feature_parts)
+
+    @classmethod
     def recommend_movies(cls, movie_title):
         df, svd, faiss_index = cls.get_df_engine()
         vectorizer = cls.get_vectorizer()
 
         m_clean = movie_title.strip().lower()
         lookup_dict = dict(zip(df["movie_title_clean"], df.index))
-        if m_clean not in lookup_dict:
-            return "Sorry! The movie you requested for is not available."
-        i = lookup_dict[m_clean]
-
-        movies_text = df.loc[i, "combined_columns"]
-        tfidf_vec = vectorizer.transform([movies_text])
-        query_vector = svd.transform(tfidf_vec).astype("float32")
-        faiss.normalize_L2(query_vector)
-        distance, indices = faiss_index.search(query_vector, k=12)
-        neighbor_indices = [idx for idx in indices[0] if idx != i]
-        recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
-        return recommendations
+        # CASE 1
+        if m_clean in lookup_dict:
+            i = lookup_dict[m_clean]
+            movies_text = df.loc[i, "combined_columns"]
+            tfidf_vec = vectorizer.transform([movies_text])
+            query_vector = svd.transform(tfidf_vec).astype("float32")
+            faiss.normalize_L2(query_vector)
+            distance, indices = faiss_index.search(query_vector, k=12)
+            neighbor_indices = [idx for idx in indices[0] if idx != i]
+            recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:10]
+            return recommendations
+            # CASE 2: New movie - Get recommendations using same logic
+        else:
+            # Get movie from TMDB 
+            # Using the same data search already fetched
+            from services.tmdb_service import TMDBService
+            
+            # Search for the movie
+            search_result = TMDBService.search_movie(movie_title)
+            if not search_result.get('results'):
+                return "Sorry! The movie you requested for is not available."
+            
+            movie_id = search_result['results'][0]['id']
+            
+            # Extract features
+            movie_text = cls._extract_features_from_tmdb(movie_id)
+            
+            # Use your EXISTING vectorizer, SVD, and FAISS 
+            tfidf_vec = vectorizer.transform([movie_text])
+            query_vector = svd.transform(tfidf_vec).astype("float32")
+            faiss.normalize_L2(query_vector)
+            
+            # Get 10 recommendations 
+            distance, indices = faiss_index.search(query_vector, k=12)
+            # Return top 10 recommendations
+            recommendations = [df["movie_title"].iloc[idx] for idx in indices[0]][:10]
+            return recommendations
 
     
     @classmethod
