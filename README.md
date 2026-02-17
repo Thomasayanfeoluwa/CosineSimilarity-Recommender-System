@@ -162,6 +162,28 @@ Your support motivates me to keep improving and adding new features!
 
 ---
 
+## 🧮 Cosine Similarity
+
+**The Heart of Movie Recommendations**
+Cosine Similarity is a metric that measures how similar two movies are by calculating the cosine of the angle between their feature vectors. In simple terms, it answers the question: "Do these two movies point in the same direction based on their attributes?"
+
+If two movies have identical features → Angle = 0° → Similarity = 1.0 (perfect match)
+If two movies share no common features → Angle = 90° → Similarity = 0.0 (no relation)
+
+<img src="https://github.com/user-attachments/assets/3ded4a7f-f896-4931-84a6-547f63868b8f" width="600" height="400" alt="Cosine Similarity">
+
+
+**Why It's Critical for This Project:**
+Unlike traditional search that looks for exact matches, Cosine Similarity captures semantic relationships between movies. It enables the system to:
+
+- Recognize that Inception and The Dark Knight are similar—even though they have different titles—because they share Christopher Nolan as director and share genres like "Action" and "Sci-Fi"
+- Focus on meaningful patterns rather than exact keyword matches
+- Provide diverse yet relevant recommendations by understanding underlying themes
+
+This approach transforms raw metadata (director, cast, genres) into intelligent, human-like recommendations that feel curated rather than algorithmic.
+
+---
+
 ## 🏗️ System Architecture
 
 1.  **Data Collection**:
