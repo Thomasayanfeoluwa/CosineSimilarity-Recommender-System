@@ -29,11 +29,12 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 
 - **Advanced Recommendation Engine**: Utilization of **TF-IDF** vectorization and **Cosine Similarity** to recommend movies based on content metadata.
 - **High-Performance Indexing**: Integrated **FAISS** with **TruncatedSVD** dimensionality reduction to handle large datasets efficiently on resource-constrained environments (e.g., Render free tier).
-- **Sentiment Analysis**: Real-time classification of user reviews (Good/Bad) using a model trained on IMDb reviews dataset with **Naive Bayes**, **Logistic Regression**, and **Linear SVM**.
+- **Sentiment Analysis**: Real-time classification of user reviews (Good/Bad) using a model trained on **50,000 IMDb reviews** (25,000 positive + 25,000 negative) with **Naive Bayes**, **Logistic Regression**, and **Linear SVM**.
 - **User Authentication**: Secure Signup/Login system with password hashing and session management.
 - **Interactive UI**: Dynamic interface with movie trailers, cast details, and responsive design.
 - **Data Management**: **PostgreSQL** database for storing users, reviews, search history, and recommendation logs.
-- **API Integration**: Real-time data fetching from the **TMDB API** for up-to-date movie metadata, posters, and trailers.
+- **API Integration**: Real-time data fetching from the **TMDB API** for up-to-date movie metadata and posters.
+- **Trailer Integration**: One-click YouTube trailer playback for every movie, fetched in real-time from TMDB API and displayed in an elegant modal player.
 
 ---
 
@@ -44,7 +45,7 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
     - **Real-Time Data Augmentation**: Integrated The Movie Database (TMDB) API to enrich the static dataset with up-to-date metadata, including live vote averages, popularity scores, trailers, and high-resolution posters for enhanced user experience.
 
 2.  **Model Training (Sentiment Analysis)**:
-    - Analyzed and preprocessed a dataset of 20,000 reviews.
+    - Analyzed and preprocessed **50,000 IMDb reviews** (25,000 positive + 25,000 negative)
     - Trained multiple algorithms: **Multinomial Naive Bayes**, **Logistic Regression**, and **Linear SVC**.
     - Selected the best-performing model for production to ensure accurate sentiment classification.
 
@@ -52,6 +53,9 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
     - **Vectorization**: Used TF-IDF to convert text data into numerical vectors.
     - **Dimensionality Reduction**: Applied **TruncatedSVD** to reduce the feature space. 
     - **Indexing**: Implemented **FAISS** index to enable fast similarity searches, solving the challenge of deploying large similarity matrices on limited cloud storage.
+4.  **Trailer Fetching & Playback**:
+    - **Backend**: `get_trailer()` method queries TMDB API for movie videos, prioritizes official trailers, and returns YouTube keys.
+    - **Frontend**: Dynamic modal with embedded YouTube player, loading states, and auto-play functionality for seamless user experience.
 
 ---
 
@@ -126,10 +130,10 @@ Without addressing this limitation, new users may experience reduced engagement 
 To address this challenge, a hybrid popularity-based fallback recommendation strategy was implemented.
 The solution involved:
 - **Collecting movie ranking metadata including**:
-Vote count,
-Vote average,
-Popularity score,
-Extracting movie metadata through web scraping and API data retrieval from TMDb.
+  - Vote count
+  - Vote average
+  - Popularity score
+  - Extracting movie metadata through web scraping and API data retrieval from TMDb.
 - **Dual-Signal Ranking Strategy**: Implemented a balanced recommendation approach by independently ranking movies based on vote average (critically-acclaimed) and popularity (widely-viewed), then merging the top results from both lists to ensure homepage diversity and appeal.
 - **Automatically displaying these curated trending recommendations when**:
 A user signs up,
@@ -171,6 +175,17 @@ This ensures that every user immediately sees 20 high-quality, trending movies u
 - Implemented Flask session authentication securely.
 - Protected sensitive routes (e.g., adding reviews) with login checks.
 - Enhanced platform trustworthiness and user data protection.
+
+### 12. Real-Time Trailer Integration
+**Problem:** Providing users with instant access to movie trailers without slowing down page loads or exceeding API rate limits.
+
+**Professional Handling:**
+- Implemented efficient trailer key extraction from TMDB API responses.
+- Prioritized official trailers over teasers and behind-the-scenes content.
+- Designed a responsive modal player with loading indicators and auto-play.
+- Cached trailer data alongside movie details to minimize redundant API calls.
+
+**Result:** Users can instantly watch any movie's official trailer with one click, significantly enhancing content discovery and engagement.
 
 ## ⚙️ Production Optimization & Scalability
 One of the most critical engineering decisions in this project was optimizing the recommendation pipeline for production deployment. By reducing model artifact size and implementing FAISS-based similarity indexing, the system was transformed from a research prototype into a scalable, real-time recommendation platform capable of operating efficiently under infrastructure constraints.
