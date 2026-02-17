@@ -25,6 +25,29 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 
 ---
 
+## ⭐ Support the Project
+
+If you find this project useful or interesting, please consider:
+
+- **Starring** the repository ⭐ – it helps others discover it
+- **Watching** for updates 👀 – stay informed about new features
+- **Forking** to experiment 🍴 – try it out for yourself
+- **Sharing** with friends who love movies 🎬
+
+Your support motivates me to keep improving and adding new features!
+
+<p align="center">
+  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/stargazers">
+    <img src="https://img.shields.io/github/stars/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  </a>
+  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/network/members">
+    <img src="https://img.shields.io/github/forks/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  </a>
+  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/watchers">
+    <img src="https://img.shields.io/github/watchers/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  </a>
+</p>
+
 ## 🚀 Key Features
 
 - **Advanced Recommendation Engine**: Utilization of **TF-IDF** vectorization and **Cosine Similarity** to recommend movies based on content metadata.
