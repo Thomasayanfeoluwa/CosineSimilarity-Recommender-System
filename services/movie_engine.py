@@ -196,7 +196,7 @@ class MovieEngine:
 
         m_clean = movie_title.strip().lower()
         lookup_dict = dict(zip(df["movie_title_clean"], df.index))
-        # CASE 1
+        # CASE 1: New movie 
         if m_clean in lookup_dict:
             i = lookup_dict[m_clean]
             movies_text = df.loc[i, "combined_columns"]
