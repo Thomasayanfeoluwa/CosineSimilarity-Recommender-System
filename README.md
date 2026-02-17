@@ -187,7 +187,12 @@ This approach transforms raw metadata (director, cast, genres) into intelligent,
 ## 🏗️ System Architecture
 
 1.  **Data Collection**:
-    - **Static Dataset Ingestion**: Cleaned, merged, and preprocessed multiple IMDb datasets (`credits.csv`, `movie_metadata.csv`, `movies_metadata.csv`, `reviews.csv`) to build a comprehensive foundational movie database covering early-year releases.
+    - **Wikipedia Web Scraping**: Developed a custom scraper to extract lists of American films released between 2018 and 2026 directly from [Wikipedia](https://en.wikipedia.org/wiki/Main_Page), ensuring the database includes recent and upcoming titles not yet available in static datasets.
+    - **Kaggle IMDb Dataset**: Downloaded the comprehensive [The Movies Dataset](https://www.kaggle.com/rounakbanik/the-movies-dataset) and [The Movie Dataset](https://www.kaggle.com/datasets/karrrimba/movie-metadatacsv) from Kaggle, which provided:
+      - `movies_metadata.csv` 
+      - `credits.csv` 
+      - `movie_metadata.csv`
+    - **IMDb Review Dataset**: Downloaded 50,000 labeled movie reviews from Kaggle's [IMDb Dataset of 50K Movie Reviews](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews) (25,000 positive + 25,000 negative) for training the sentiment analysis model.
     - **Real-Time Data Augmentation**: Integrated The Movie Database (TMDB) API to enrich the static dataset with up-to-date metadata, including live vote averages, popularity scores, trailers, and high-resolution posters for enhanced user experience.
 
 2.  **Model Training (Sentiment Analysis)**:
