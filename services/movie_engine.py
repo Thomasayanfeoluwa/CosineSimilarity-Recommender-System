@@ -203,7 +203,7 @@ class MovieEngine:
             tfidf_vec = vectorizer.transform([movies_text])
             query_vector = svd.transform(tfidf_vec).astype("float32")
             faiss.normalize_L2(query_vector)
-            distance, indices = faiss_index.search(query_vector, k=12)
+            distance, indices = faiss_index.search(query_vector, k=13)
             neighbor_indices = [idx for idx in indices[0] if idx != i]
             recommendations = [df["movie_title"].iloc[idx] for idx in neighbor_indices][:12]
             return recommendations
@@ -224,8 +224,8 @@ class MovieEngine:
             query_vector = svd.transform(tfidf_vec).astype("float32")
             faiss.normalize_L2(query_vector)
             
-            # Get 10 recommendations 
-            distance, indices = faiss_index.search(query_vector, k=12)
+            # Get 12 recommendations 
+            distance, indices = faiss_index.search(query_vector, k=13)
             # Return top 10 recommendations
             recommendations = [df["movie_title"].iloc[idx] for idx in indices[0]][:12]
             return recommendations
