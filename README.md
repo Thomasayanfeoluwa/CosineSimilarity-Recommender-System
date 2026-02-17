@@ -29,10 +29,10 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 
 - **Advanced Recommendation Engine**: Utilization of **TF-IDF** vectorization and **Cosine Similarity** to recommend movies based on content metadata.
 - **High-Performance Indexing**: Integrated **FAISS** with **TruncatedSVD** dimensionality reduction to handle large datasets efficiently on resource-constrained environments (e.g., Render free tier).
-- **Sentiment Analysis**: Real-time classification of user reviews (Good/Bad) using a model trained on 20,000 IMDb reviews with **Naive Bayes**, **Logistic Regression**, and **Linear SVM**.
+- **Sentiment Analysis**: Real-time classification of user reviews (Good/Bad) using a model trained on IMDb reviews dataset with **Naive Bayes**, **Logistic Regression**, and **Linear SVM**.
 - **User Authentication**: Secure Signup/Login system with password hashing and session management.
 - **Interactive UI**: Dynamic interface with movie trailers, cast details, and responsive design.
-- **Data Management**:**PostgreSQL** database for storing users, reviews, search history, and recommendation logs.
+- **Data Management**: **PostgreSQL** database for storing users, reviews, search history, and recommendation logs.
 - **API Integration**: Real-time data fetching from the **TMDB API** for up-to-date movie metadata, posters, and trailers.
 
 ---
@@ -40,8 +40,8 @@ A robust, full-stack movie recommendation engine built with **Flask**, **Postgre
 ## 🏗️ System Architecture
 
 1.  **Data Collection**:
-    - Scraped IMDb datasets to build a comprehensive initial movie database.
-    - Integrated TMDB API for real-time metadata updates.
+    - **Static Dataset Ingestion**: Cleaned, merged, and preprocessed multiple IMDb datasets (`credits.csv`, `movie_metadata.csv`, `movies_metadata.csv`, `reviews.csv`) to build a comprehensive foundational movie database covering early-year releases.
+    - **Real-Time Data Augmentation**: Integrated The Movie Database (TMDB) API to enrich the static dataset with up-to-date metadata, including live vote averages, popularity scores, trailers, and high-resolution posters for enhanced user experience.
 
 2.  **Model Training (Sentiment Analysis)**:
     - Analyzed and preprocessed a dataset of 20,000 reviews.
@@ -125,16 +125,13 @@ Without addressing this limitation, new users may experience reduced engagement 
 **Professional Handling:**
 To address this challenge, a hybrid popularity-based fallback recommendation strategy was implemented.
 The solution involved:
-- Collecting movie ranking metadata including:
+- **Collecting movie ranking metadata including**:
 Vote count,
 Vote average,
 Popularity score,
 Extracting movie metadata through web scraping and API data retrieval from TMDb.
-- Designing a weighted ranking formula combining:
-Community ratings reliability (vote count),
-Audience satisfaction (vote average),
-Market engagement signals (popularity)
-- Automatically displaying these curated trending recommendations when:
+- **Dual-Signal Ranking Strategy**: Implemented a balanced recommendation approach by independently ranking movies based on vote average (critically-acclaimed) and popularity (widely-viewed), then merging the top results from both lists to ensure homepage diversity and appeal.
+- **Automatically displaying these curated trending recommendations when**:
 A user signs up,
 A user has no search or recommendation history,
 Fetching and displaying associated movie posters to improve visual engagement and user discovery experience
