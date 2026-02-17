@@ -37,14 +37,14 @@ If you find this project useful or interesting, please consider:
 Your support motivates me to keep improving and adding new features!
 
 <p align="center">
-  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/stargazers">
-    <img src="https://img.shields.io/github/stars/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  <a href="https://github.com/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System/stargazers">
+    <img src="https://img.shields.io/github/stars/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System?style=social">
   </a>
-  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/network/members">
-    <img src="https://img.shields.io/github/forks/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  <a href="https://github.com/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System/network/members">
+    <img src="https://img.shields.io/github/forks/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System?style=social">
   </a>
-  <a href="https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System/watchers">
-    <img src="https://img.shields.io/github/watchers/Thomasayanfeoluwa/CosineSimilarity-Recommender-System?style=social">
+  <a href="https://github.com/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System/watchers">
+    <img src="https://img.shields.io/github/watchers/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System?style=social">
   </a>
 </p>
 
@@ -290,8 +290,8 @@ One of the most critical engineering decisions in this project was optimizing th
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/Thomasayanfeoluwa/CosineSimilarity-Recommender-System
-    cd CosineSimilarity-Recommender-System
+    git clone https://github.com/Thomasayanfeoluwa/Movie-Cotent-Based-Recommender-System
+    cd Movie-Cotent-Based-Recommender-System
     ```
 
 2.  **Create a Virtual Environment**
