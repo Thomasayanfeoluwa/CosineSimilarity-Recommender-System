@@ -2,6 +2,10 @@
 
 The primary goal of this project is to design and deploy an intelligent movie recommendation system that enhances user content discovery, improves engagement, and delivers personalized entertainment experiences while maintaining cost-efficient and scalable infrastructure. The project aims to solve the challenge of overwhelming content libraries by leveraging machine learning techniques to recommend relevant movies based on user interests, movie metadata, and similarity analysis. Additionally, the system integrates user interaction features such as reviews and search behavior to support data-driven personalization and continuous improvement of recommendation accuracy. From a business perspective, the solution was built to improve user retention, increase platform engagement time, optimize infrastructure resources through model compression and FAISS indexing, and provide actionable user preference insights that can support strategic decision-making, content acquisition planning, and competitive advantage in digital entertainment platforms.
 
+## 💼 Business Value & Strategic Impact
+
+In today's digital landscape, users face overwhelming content choices—a challenge this project directly addresses through **content-based filtering (CBF)** . Unlike collaborative filtering that relies on other users' behavior, CBF recommends movies based on their actual attributes (director, cast, genres), creating a personalized experience that drives engagement and platform growth.
+
 https://github.com/user-attachments/assets/64f280a4-f5ae-40dd-a605-2b997cfaf889
 
 
