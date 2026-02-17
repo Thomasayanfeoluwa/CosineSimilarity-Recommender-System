@@ -213,6 +213,7 @@ This approach transforms raw metadata (director, cast, genres) into intelligent,
 ## 🛠️ Tech Stack
 
 - **Backend**: Python, Flask, Gunicorn
+- **Web Scrapping**: BeautifulSoap
 - **Database**: PostgreSQL
 - **Machine Learning**: Scikit-Learn, NumPy, Pandas, FAISS, NLTK
 - **Frontend**: HTML5, CSS3, JavaScript (AJAX), Bootstrap
