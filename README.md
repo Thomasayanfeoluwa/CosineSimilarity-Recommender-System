@@ -185,6 +185,7 @@ This approach transforms raw metadata (director, cast, genres) into intelligent,
 ---
 
 ## 🏗️ System Architecture
+<img width="2300" height="2826" alt="movie-recommendation-architecture" src="https://github.com/user-attachments/assets/57ac7461-505b-44a8-935d-d73eb01e157a" />
 
 1.  **Data Collection**:
     - **Wikipedia Web Scraping**: Developed a custom scraper to extract lists of American films released between 2018 and 2026 directly from [Wikipedia](https://en.wikipedia.org/wiki/Main_Page), ensuring the database includes recent and upcoming titles not yet available in static datasets.
